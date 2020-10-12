@@ -15,6 +15,11 @@ class ShipTest < Minitest::Test
   def test_attributes
     assert_equal "Cruiser", @ship.name
     assert_equal 3, @ship.length
+    assert_equal 3, @ship.health
+  end
+
+  def test_sunk
+    assert_equal false, @ship.sunk?
   end
 
 end
