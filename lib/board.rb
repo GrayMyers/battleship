@@ -4,6 +4,7 @@ class Board
   attr_reader :cells
   def initialize(width = 4,height = 4)
     @cells = create_empty_cells(width,height)
+    require "pry"; binding.pry
   end
 
   private
@@ -13,7 +14,7 @@ class Board
     cells = {}
     width.times do |x|
       height.times do |y|
-        coordinate = letters[y] + x.to_s
+        coordinate = letters[y] + (x+1).to_s
         cells[coordinate] = Cell.new(coordinate)
       end
     end
