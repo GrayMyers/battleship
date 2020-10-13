@@ -21,6 +21,8 @@ class CellTest < Minitest::Test
     # assert_equal @ship, @cell.ship
   end
 
-
+  def test_empty
+    assert_equal true, @cell.empty?
+  end
 
 end

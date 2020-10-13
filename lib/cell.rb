@@ -9,4 +9,9 @@ class Cell
   def fired_upon?
     @fired_upon
   end
+
+  def empty?
+    @ship == nil
+  end
+
 end
