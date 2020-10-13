@@ -12,4 +12,9 @@ class BoardTest < Minitest::Test
     assert_instance_of Board, @board
   end
 
+  def test_attributes
+    assert_instance_of Cell, @board.cells["A1"]
+    assert_equal 16, @board.cells.size
+  end
+
 end
