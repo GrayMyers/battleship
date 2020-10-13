@@ -20,6 +20,16 @@ class ShipTest < Minitest::Test
 
   def test_sunk
     assert_equal false, @ship.sunk?
+    3.times do
+      @ship.hit
+    end
+    assert_equal true, @ship.sunk?
   end
 
+  def test_hit
+    @ship.hit
+    assert_equal 2, @ship.health
+    @ship.hit
+    assert_equal 1, @ship.health
+  end
 end
