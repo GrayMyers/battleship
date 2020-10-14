@@ -16,5 +16,9 @@ class BoardTest < Minitest::Test
     assert_instance_of Cell, @board.cells["A1"]
     assert_equal 16, @board.cells.size
   end
+  def test_valid_coordinate?
+    assert_equal true, @board.valid_coordinate?("A1")
+    assert_equal false, @board.valid_coordinate?("Z1")
+  end
 
 end

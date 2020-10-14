@@ -4,13 +4,14 @@ class Board
   attr_reader :cells
   def initialize(width = 4,height = 4)
     @cells = create_empty_cells(width,height)
-    require "pry"; binding.pry
   end
 
-  private
+  def valid_coordinate?(cell)
+    @cells.key?(cell)
+  end
 
   def create_empty_cells(width,height)
-    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    letters = [*"A".."Z"]
     cells = {}
     width.times do |x|
       height.times do |y|
