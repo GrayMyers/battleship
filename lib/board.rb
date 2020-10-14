@@ -6,6 +6,12 @@ class Board
     @cells = create_empty_cells(width,height)
   end
 
+  def valid_placement?(ship,coords)
+    coords.all? do |coord|
+      valid_coordinate?(coord)
+    end
+  end
+
   def valid_coordinate?(cell)
     @cells.key?(cell)
   end
