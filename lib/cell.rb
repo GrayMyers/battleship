@@ -34,7 +34,7 @@ class Cell
       "X"
     elsif fired_upon?
       "H"
-    else render_ships
+    else
       "S"
     end
   end
