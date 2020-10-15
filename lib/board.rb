@@ -4,6 +4,8 @@ class Board
   attr_reader :cells
   def initialize(width = 4,height = 4)
     @cells = create_empty_cells(width,height)
+    @width = width
+    @height = height
   end
 
   def valid_placement?(ship,coords)
@@ -71,4 +73,21 @@ class Board
     cells
   end
 
+  def render(show_ships = false)
+    # output_string = "  1 2 3 4 \nA "
+    output_string = "  "
+    @width.times do |number|
+      output_string += (number + 1).to_s + " "
+    end
+    output_string += "\nA "
+    letters = [*"A".."Z"]
+    @height.times do |y|
+      @width.times do |x|
+        coordinate = letters[y] + (x+1).to_s
+        output_string += @cells[coordinate].render(show_ships) + " "
+      end
+      output_string += "\n" + letters[y + 1] + " "
+    end
+    output_string.rstrip[0..-2]
+  end
 end
