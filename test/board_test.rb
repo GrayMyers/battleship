@@ -1,11 +1,14 @@
 require './lib/board.rb'
 require './lib/cell.rb'
+require './lib/ship.rb'
 require 'minitest/autorun'
 require 'minitest/pride'
 
 class BoardTest < Minitest::Test
   def setup
     @board = Board.new(4,4)
+    @cruiser = Ship.new("Cruiser",3)
+    @submarine = Ship.new("Submarine",2)
   end
 
   def test_it_exists
@@ -15,6 +18,31 @@ class BoardTest < Minitest::Test
   def test_attributes
     assert_instance_of Cell, @board.cells["A1"]
     assert_equal 16, @board.cells.size
+  end
+  def test_valid_coordinate?
+    assert_equal true, @board.valid_coordinate?("A1")
+    assert_equal false, @board.valid_coordinate?("Z1")
+  end
+
+  def test_that_ship_coords_are_valid
+    assert_equal true, @board.valid_placement?(@cruiser,["A1","A2","A3"])
+    assert_equal true, @board.valid_placement?(@cruiser,["A1","B1","C1"])
+
+    assert_equal false, @board.valid_placement?(@cruiser,["A1","A2","Z3"])
+    assert_equal false, @board.valid_placement?(@cruiser,["A1","A2","A3","A4"])
+    assert_equal false, @board.valid_placement?(@cruiser,["A1","D2","C3"])
+    assert_equal false, @board.valid_placement?(@cruiser,["A1","A2","B2"])
+
+    @board.place(@cruiser,["A1","A2","A3"])
+    assert_equal false, @board.valid_placement?(@submarine,["A2","B2"])
+  end
+
+  def test_place
+    @board.place(@cruiser,["A1","A2","A3"])
+    cell1 = @board.cells["A1"]
+    cell2 = @board.cells["A2"]
+    cell3 = @board.cells["A3"]
+    assert_equal @cruiser, cell1.ship
   end
 
 end
