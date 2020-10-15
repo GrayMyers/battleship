@@ -45,4 +45,33 @@ class BoardTest < Minitest::Test
     assert_equal @cruiser, cell1.ship
   end
 
+  def test_render_board
+    expected_empty = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected_empty, @board.render
+
+    @board.place(@cruiser,["A1","A2","A3"])
+
+    expected_with_ship = "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected_empty, @board.render
+    assert_equal expected_with_ship, @board.render(true)
+
+    @board.cells["B1"].fire_upon
+    expected_with_ship_miss = "  1 2 3 4 \nA S S S . \nB M . . . \nC . . . . \nD . . . . \n"
+    expected_empty_miss = "  1 2 3 4 \nA . . . . \nB M . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected_empty_miss, @board.render
+    assert_equal expected_empty_miss, @board.render(true)
+
+    @board.cells["A1"].fire_upon
+    expected_with_ship_hit = "  1 2 3 4 \nA H S S . \nB M . . . \nC . . . . \nD . . . . \n"
+    expected_empty_hit = "  1 2 3 4 \nA H . . . \nB M . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected_empty_hit, @board.render
+    assert_equal expected_empty_hit, @board.render(true)
+
+    @board.cells["A2"].fire_upon
+    @board.cells["A3"].fire_upon
+    expected_with_ship_hit = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
+    expected_empty_hit = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected_empty_hit, @board.render
+    assert_equal expected_empty_hit, @board.render(true)    
+  end
 end
