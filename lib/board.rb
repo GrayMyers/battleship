@@ -7,9 +7,36 @@ class Board
   end
 
   def valid_placement?(ship,coords)
-    coords.all? do |coord|
+    coords_valid = coords.all? do |coord|
       valid_coordinate?(coord)
     end
+    length_valid = (coords.count == ship.length)
+
+    coords_consec = check_consecutivity(coords)
+    coords_valid && length_valid && coords_consec
+  end
+
+  def check_consecutivity(coords)
+    index = 0
+    results = []
+    while index < coords.count - 1
+      results << check_adjacent(coords[index],coords[index+1])
+      index += 1
+    end
+    results.all? do |result|
+      results[0] == result && result != nil
+    end
+  end
+
+  def check_adjacent(cell,cell2)
+    adjacent_cells = {
+      up: (cell[0].ord - 1).chr + cell[1],
+      down: (cell[0].ord + 1).chr + cell[1],
+      left: cell[0] + (cell[1].to_i - 1).to_s,
+      right: cell[0] + (cell[1].to_i + 1).to_s
+    }
+    adjacent_cells.key(cell2)
+
   end
 
   def valid_coordinate?(cell)
