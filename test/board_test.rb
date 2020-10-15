@@ -59,19 +59,18 @@ class BoardTest < Minitest::Test
     expected_with_ship_miss = "  1 2 3 4 \nA S S S . \nB M . . . \nC . . . . \nD . . . . \n"
     expected_empty_miss = "  1 2 3 4 \nA . . . . \nB M . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_empty_miss, @board.render
-    assert_equal expected_empty_miss, @board.render(true)
+    assert_equal expected_with_ship_miss, @board.render(true)
 
     @board.cells["A1"].fire_upon
     expected_with_ship_hit = "  1 2 3 4 \nA H S S . \nB M . . . \nC . . . . \nD . . . . \n"
     expected_empty_hit = "  1 2 3 4 \nA H . . . \nB M . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_empty_hit, @board.render
-    assert_equal expected_empty_hit, @board.render(true)
+    assert_equal expected_with_ship_hit, @board.render(true)
 
     @board.cells["A2"].fire_upon
     @board.cells["A3"].fire_upon
-    expected_with_ship_hit = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
-    expected_empty_hit = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
-    assert_equal expected_empty_hit, @board.render
-    assert_equal expected_empty_hit, @board.render(true)    
+    expected_with_ship_sunk = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected_with_ship_sunk, @board.render
+    assert_equal expected_with_ship_sunk, @board.render(true)    
   end
 end
