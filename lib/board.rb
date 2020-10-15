@@ -10,10 +10,26 @@ class Board
     coords_valid = coords.all? do |coord|
       valid_coordinate?(coord)
     end
+    if !coords_valid
+      return false
+    end
+    coords_empty = coords.all? do |coord|
+      @cells[coord].empty?
+    end
+
     length_valid = (coords.count == ship.length)
 
     coords_consec = check_consecutivity(coords)
-    coords_valid && length_valid && coords_consec
+    coords_valid &&
+    length_valid &&
+    coords_consec &&
+    coords_empty
+  end
+
+  def place(ship,coords)
+    coords.each do |coord|
+      @cells[coord].place_ship(ship)
+    end
   end
 
   def check_consecutivity(coords)
