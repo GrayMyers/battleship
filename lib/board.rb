@@ -2,6 +2,7 @@ require './lib/cell.rb'
 
 class Board
   attr_reader :cells
+
   def initialize(width = 4,height = 4)
     @cells = create_empty_cells(width,height)
     @width = width
@@ -21,7 +22,7 @@ class Board
 
     length_valid = (coords.count == ship.length)
 
-    coords_consec = check_consecutivity(coords)
+    coords_consec = consecutive?(coords)
     coords_valid &&
     length_valid &&
     coords_consec &&
@@ -34,15 +35,12 @@ class Board
     end
   end
 
-  def check_consecutivity(coords)
-    index = 0
-    results = []
-    while index < coords.count - 1
-      results << check_adjacent(coords[index],coords[index+1])
-      index += 1
+  def consecutive?(coords)
+    results = coords.each_cons(2).map do |pair|
+      check_adjacent(pair[0], pair[1])
     end
     results.all? do |result|
-      results[0] == result && result != nil
+      results.uniq.count == 1 && results.uniq != [nil]
     end
   end
 
@@ -57,8 +55,8 @@ class Board
 
   end
 
-  def valid_coordinate?(cell)
-    @cells.key?(cell)
+  def valid_coordinate?(coord)
+    @cells.key?(coord)
   end
 
   def create_empty_cells(width,height)
