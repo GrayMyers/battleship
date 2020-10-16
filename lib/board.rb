@@ -11,19 +11,21 @@ class Board
   end
 
   def clamp(num,min,max)
-    result = [min,num,max].sort[1]
-    if result != num
-      puts "Warning: Number clamped to value #{result}"
-    end
-    result
+    result != num, [min,num,max].sort[1]
   end
 
   def create_empty_cells(width,height)
     default_min = 2 #there is no reason to work with a board smaller than this
     default_y_max = 26 #to prevent invalid characters
     default_x_max = 10 #to prevent row misalignment
-    width = clamp(width,default_min,default_x_max)
-    width = clamp(height,default_min,default_y_max)
+    xsuccess, width = clamp(width,default_min,default_x_max)
+    ysuccess, height = clamp(height,default_min,default_y_max)
+    if !xsuccess
+      puts "Your input for the horizontal board size was out of bounds and set to #{result}."
+    end
+    if !ysuccess
+      puts "Your input for the vertical board size was out of bounds and set to #{result}."
+    end
     letters = [*"A".."Z"]
     cells = {}
     width.times do |x|
@@ -52,10 +54,11 @@ class Board
 
   def consecutive?(coords)
     results = coords.each_cons(2).map do |pair|
-      check_adjacent(pair[0], pair[1])
+      cell1, cell2 = pair
+      adjacent_cells(cell1).key(cell2)
     end
     results.all? do |result|
-      results.uniq.count == 1 && results.uniq != [nil]
+      results.uniq.count == 1 && results[0]
     end
   end
 
@@ -66,10 +69,6 @@ class Board
       left: cell[0] + (cell[1].to_i - 1).to_s,
       right: cell[0] + (cell[1].to_i + 1).to_s
     }
-  end
-
-  def check_adjacent(cell,cell2)
-    adjacent_cells(cell).key(cell2)
   end
 
   def place(ship,coords)
