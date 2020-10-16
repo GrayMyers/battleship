@@ -10,23 +10,14 @@ class Board
   end
 
   def valid_placement?(ship,coords)
-    coords_valid = coords.all? do |coord|
-      valid_coordinate?(coord)
-    end
-    if !coords_valid
-      return false
-    end
     coords_empty = coords.all? do |coord|
-      @cells[coord].empty?
+      if valid_coordinate?(coord)
+        @cells[coord].empty?
+      end
     end
-
     length_valid = (coords.count == ship.length)
-
     coords_consec = consecutive?(coords)
-    coords_valid &&
-    length_valid &&
-    coords_consec &&
-    coords_empty
+    length_valid && coords_consec && coords_empty
   end
 
   def place(ship,coords)
@@ -50,9 +41,8 @@ class Board
       down: (cell[0].ord + 1).chr + cell[1],
       left: cell[0] + (cell[1].to_i - 1).to_s,
       right: cell[0] + (cell[1].to_i + 1).to_s
-    }
+      }
     adjacent_cells.key(cell2)
-
   end
 
   def valid_coordinate?(coord)
