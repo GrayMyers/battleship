@@ -10,7 +10,20 @@ class Board
     @height = height
   end
 
+  def clamp(num,min,max)
+    result = [min,num,max].sort[1]
+    if result != num
+      puts "Warning: Number clamped to value #{result}"
+    end
+    result
+  end
+
   def create_empty_cells(width,height)
+    default_min = 2 #there is no reason to work with a board smaller than this
+    default_y_max = 26 #to prevent invalid characters
+    default_x_max = 10 #to prevent row misalignment
+    width = clamp(width,default_min,default_x_max)
+    width = clamp(height,default_min,default_y_max)
     letters = [*"A".."Z"]
     cells = {}
     width.times do |x|
@@ -46,14 +59,17 @@ class Board
     end
   end
 
-  def check_adjacent(cell,cell2)
-    adjacent_cells = {
+  def adjacent_cells(cell)
+    {
       up: (cell[0].ord - 1).chr + cell[1],
       down: (cell[0].ord + 1).chr + cell[1],
       left: cell[0] + (cell[1].to_i - 1).to_s,
       right: cell[0] + (cell[1].to_i + 1).to_s
-      }
-    adjacent_cells.key(cell2)
+    }
+  end
+
+  def check_adjacent(cell,cell2)
+    adjacent_cells(cell).key(cell2)
   end
 
   def place(ship,coords)
