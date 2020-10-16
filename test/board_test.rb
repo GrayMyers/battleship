@@ -30,17 +30,37 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_coordinate?("A14")
   end
 
-  def test_that_ship_coords_are_valid
+  def test_valid_placement_checks_for_valid_coordinates
     assert_equal true, @board.valid_placement?(@cruiser,["A1","A2","A3"])
     assert_equal true, @board.valid_placement?(@cruiser,["A1","B1","C1"])
-
+    assert_equal true, @board.valid_placement?(@submarine, ["C2", "D2"])
     assert_equal false, @board.valid_placement?(@cruiser,["A1","A2","Z3"])
+    assert_equal false, @board.valid_placement?(@submarine, ["G8", "H8"])
+  end
+
+  def test_valid_placement_checks_ship_length
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A2"])
     assert_equal false, @board.valid_placement?(@cruiser,["A1","A2","A3","A4"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A1", "A2", "A3"])
+  end
+
+  def test_valid_placement_checks_coordinates_are_consecutive
     assert_equal false, @board.valid_placement?(@cruiser,["A1","D2","C3"])
+    assert_equal false, @board.valid_placement?(@submarine, ["B2", "D2"])
+  end
+
+  def test_valid_placement_checks_coordinates_are_linear
     assert_equal false, @board.valid_placement?(@cruiser,["A1","A2","B2"])
+  end
+
+  def test_valid_placement_checks_for_existing_ships
+    assert_equal true, @board.valid_placement?(@submarine,["A3","A4"])
+    assert_equal true, @board.valid_placement?(@cruiser,["A2","B2","C2"])
 
     @board.place(@cruiser,["A1","A2","A3"])
-    assert_equal false, @board.valid_placement?(@submarine,["A2","B2"])
+
+    assert_equal false, @board.valid_placement?(@submarine,["A3","A4"])
+    assert_equal false, @board.valid_placement?(@cruiser,["A2","B2","C2"])
   end
 
   def test_place
@@ -49,6 +69,8 @@ class BoardTest < Minitest::Test
     cell2 = @board.cells["A2"]
     cell3 = @board.cells["A3"]
     assert_equal @cruiser, cell1.ship
+    assert cell1.ship == cell3.ship
+    assert cell1.ship == cell2.ship
   end
 
   def test_render_board
