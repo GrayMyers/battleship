@@ -17,11 +17,17 @@ class BoardTest < Minitest::Test
 
   def test_attributes
     assert_instance_of Cell, @board.cells["A1"]
+    assert_instance_of Cell, @board.cells["D2"]
     assert_equal 16, @board.cells.size
+    assert_equal true, @board.cells.key?("A1")
   end
+
   def test_valid_coordinate?
     assert_equal true, @board.valid_coordinate?("A1")
+    assert_equal true, @board.valid_coordinate?("D4")
+    assert_equal false, @board.valid_coordinate?("A5")
     assert_equal false, @board.valid_coordinate?("Z1")
+    assert_equal false, @board.valid_coordinate?("A14")
   end
 
   def test_that_ship_coords_are_valid
@@ -71,6 +77,6 @@ class BoardTest < Minitest::Test
     @board.cells["A3"].fire_upon
     expected_with_ship_sunk = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_with_ship_sunk, @board.render
-    assert_equal expected_with_ship_sunk, @board.render(true)    
+    assert_equal expected_with_ship_sunk, @board.render(true)
   end
 end
