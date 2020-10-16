@@ -22,12 +22,26 @@ class BoardTest < Minitest::Test
     assert_equal true, @board.cells.key?("A1")
   end
 
+  def test_create_empty_cells
+    assert_equal ["A1", "B1", "A2", "B2"], (@board.create_empty_cells(2,2)).keys
+    assert_instance_of Cell, (@board.create_empty_cells(2,2))["A1"]
+  end
+
   def test_valid_coordinate?
     assert_equal true, @board.valid_coordinate?("A1")
     assert_equal true, @board.valid_coordinate?("D4")
     assert_equal false, @board.valid_coordinate?("A5")
     assert_equal false, @board.valid_coordinate?("Z1")
     assert_equal false, @board.valid_coordinate?("A14")
+  end
+
+  def test_check_adjacent
+    assert_equal :up, @board.check_adjacent("B2","A2")
+    assert_equal :down, @board.check_adjacent("B2","C2")
+    assert_equal :left, @board.check_adjacent("B2","B1")
+    assert_equal :right, @board.check_adjacent("B2","B3")
+    assert_nil @board.check_adjacent("B2","B4")
+    assert_nil @board.check_adjacent("B2","E4")
   end
 
   def test_valid_placement_checks_for_valid_coordinates
@@ -76,6 +90,7 @@ class BoardTest < Minitest::Test
   def test_render_board
     expected_empty = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_empty, @board.render
+    assert_equal expected_empty, @board.render(true)
 
     @board.place(@cruiser,["A1","A2","A3"])
 
@@ -84,14 +99,14 @@ class BoardTest < Minitest::Test
     assert_equal expected_with_ship, @board.render(true)
 
     @board.cells["B1"].fire_upon
-    expected_with_ship_miss = "  1 2 3 4 \nA S S S . \nB M . . . \nC . . . . \nD . . . . \n"
     expected_empty_miss = "  1 2 3 4 \nA . . . . \nB M . . . \nC . . . . \nD . . . . \n"
+    expected_with_ship_miss = "  1 2 3 4 \nA S S S . \nB M . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_empty_miss, @board.render
     assert_equal expected_with_ship_miss, @board.render(true)
 
     @board.cells["A1"].fire_upon
-    expected_with_ship_hit = "  1 2 3 4 \nA H S S . \nB M . . . \nC . . . . \nD . . . . \n"
     expected_empty_hit = "  1 2 3 4 \nA H . . . \nB M . . . \nC . . . . \nD . . . . \n"
+    expected_with_ship_hit = "  1 2 3 4 \nA H S S . \nB M . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_empty_hit, @board.render
     assert_equal expected_with_ship_hit, @board.render(true)
 
