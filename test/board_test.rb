@@ -44,6 +44,11 @@ class BoardTest < Minitest::Test
     assert_nil @board.check_adjacent("B2","E4")
   end
 
+  def test_consecutive
+    assert_equal true, @board.consecutive?(["A1","A2","A3"])
+    assert_equal false, @board.consecutive?(["B2","B4"])
+  end
+
   def test_valid_placement_checks_for_valid_coordinates
     assert_equal true, @board.valid_placement?(@cruiser,["A1","A2","A3"])
     assert_equal true, @board.valid_placement?(@cruiser,["A1","B1","C1"])
