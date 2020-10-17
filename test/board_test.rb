@@ -35,13 +35,21 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_coordinate?("A14")
   end
 
-  def test_check_adjacent
-    assert_equal :up, @board.check_adjacent("B2","A2")
-    assert_equal :down, @board.check_adjacent("B2","C2")
-    assert_equal :left, @board.check_adjacent("B2","B1")
-    assert_equal :right, @board.check_adjacent("B2","B3")
-    assert_nil @board.check_adjacent("B2","B4")
-    assert_nil @board.check_adjacent("B2","E4")
+  def test_adjacent_cells
+    adjacent_hash_B2 = {
+      up: "A2",
+      right: "B3",
+      left: "B1",
+      down: "C2"
+    }
+    adjacent_hash_C3 = {
+      up: "B3",
+      right: "C4",
+      left: "C2",
+      down: "D3"
+    }
+    assert_equal adjacent_hash_B2, @board.adjacent_cells("B2")
+    assert_equal adjacent_hash_C3, @board.adjacent_cells("C3")
   end
 
   def test_consecutive
@@ -120,5 +128,11 @@ class BoardTest < Minitest::Test
     expected_with_ship_sunk = "  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n"
     assert_equal expected_with_ship_sunk, @board.render
     assert_equal expected_with_ship_sunk, @board.render(true)
+  end
+
+  def test_clamp
+    assert_equal [false, 3],@board.clamp(5,3,2)
+    assert_equal [false, 2],@board.clamp(-5,3,2)
+    assert_equal [true, 5],@board.clamp(5,10,2)
   end
 end
