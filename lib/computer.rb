@@ -41,6 +41,18 @@ class Computer
     target = select_target
     if target != nil
       @user_board.cells[target].fire_upon
+      display_shot_result(target)
+    end
+  end
+
+  def display_shot_result(target)
+    ship = @user_board.cells[target].ship
+    if ship == nil
+      puts "My shot on #{target} was a miss."
+    elsif ship.sunk?
+      puts "My shot on #{target} was a miss.\n I sunk your #{ship.name}!"
+    else
+      puts "My shot on #{target} was a hit."
     end
   end
 end
