@@ -57,11 +57,14 @@ class ComputerTest < Minitest::Test
     @computer.fire_on_user(@user_board)
     assert_equal 2, @user_board.render.count("M")
 
-    14.times do
-      @computer.fire_on_user(@user_board)
-    end
-    assert_equal 16, @user_board.render.count("M")
   end
 
-  # assert_equal 16, @computer.fire_on_user(@user_board)
+  def test_it_does_not_create_an_endless_loop_if_all_cells_have_been_fired_on
+    16.times do
+      @computer.fire_on_user(@user_board)
+    end
+
+    assert_equal 16, @user_board.render.count("M")
+    assert_equal nil, @computer.fire_on_user(@user_board)
+  end
 end

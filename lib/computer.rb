@@ -53,6 +53,9 @@ class Computer
   end
 
   def fire_on_user(user_board)
-    user_board.cells[select_target(user_board)].fire_upon
+    target = select_target(user_board)
+    if target != nil
+      user_board.cells[target].fire_upon
+    end
   end
 end
