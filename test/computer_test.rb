@@ -8,6 +8,7 @@ require './lib/ship'
 class ComputerTest < Minitest::Test
   def setup
     @computer = Computer.new
+    @computer.create_ships
   end
 
   def test_it_exists
@@ -19,12 +20,20 @@ class ComputerTest < Minitest::Test
   end
 
   def test_it_can_create_ships
-    @computer.create_ships({"Cruiser"=> 3, "Sumbarine"=> 2})
     assert_instance_of Ship, @computer.ships[0]
-    assert_instance_of Ship, @computer.ships[1]    
+    assert_instance_of Ship, @computer.ships[1]
   end
 
-  def test_it_can_generate_a_ship_placement
+  def test_it_can_generate_coordinates
+    coordinates = @computer.generate_coordinates(3)
+    assert_equal 3, coordinates.count
+
+    coordinates = @computer.generate_coordinates(4)
+    assert_equal 4, coordinates.count
+
+    assert_equal true, coordinates.all? {|coord| @computer.board.valid_coordinate?(coord)}
+    assert_equal true, @computer.board.consecutive?(coordinates)
+    assert_equal true, coordinates.each_cons(2).all? {|pair| @computer.board.consecutive?(pair)}
   end
 
   def test_it_can_validate_ship_placement
