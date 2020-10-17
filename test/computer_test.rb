@@ -36,10 +36,10 @@ class ComputerTest < Minitest::Test
     assert_equal true, coordinates.each_cons(2).all? {|pair| @computer.board.consecutive?(pair)}
   end
 
-  def test_it_can_validate_ship_placement
-  end
-
   def test_it_can_place_ships
+    @computer.place_ships
+
+    assert_equal 5, @computer.board.render(true).count("S")
   end
 
   def test_it_can_choose_a_random_coordinate_to_fire_on

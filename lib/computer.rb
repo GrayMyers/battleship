@@ -5,7 +5,7 @@ require './lib/ship'
 class Computer
   attr_reader :board, :ships
 
-  def initialize(width = 4,height = 4)
+  def initialize(width = 8,height = 8)
     @board = Board.new(width, height)
   end
 
@@ -17,7 +17,7 @@ class Computer
 
   def generate_coordinates(length)
     coords = [@board.cells.keys.sample]
-    coords << @board.adjacent_cells(coords[0]).values.find do |value|
+    coords << @board.adjacent_cells(coords[0]).values.shuffle.find do |value|
       @board.valid_coordinate?(value)
     end
     (length-2).times do |number|
@@ -33,5 +33,15 @@ class Computer
       end
     end
     coords = coords.sort
+  end
+
+  def place_ships
+    @ships.each do |ship|
+      coords = generate_coordinates(ship.length)
+      until @board.valid_placement?(ship,coords)
+        coords = generate_coordinates(ship.length)
+      end
+      @board.place(ship,coords)
+    end
   end
 end
