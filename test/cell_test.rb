@@ -73,10 +73,4 @@ class CellTest < Minitest::Test
 
     assert_equal "X", cell_3.render(true)
   end
-
-  def test_clamp
-    assert_equal @board.clamp(5,3,2), 3
-    assert_equal @board.clamp(-5,3,2), 2
-    assert_equal @board.clamp(5,10,2), 5
-  end
 end

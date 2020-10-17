@@ -129,4 +129,10 @@ class BoardTest < Minitest::Test
     assert_equal expected_with_ship_sunk, @board.render
     assert_equal expected_with_ship_sunk, @board.render(true)
   end
+
+  def test_clamp
+    assert_equal @board.clamp(5,3,2), 3
+    assert_equal @board.clamp(-5,3,2), 2
+    assert_equal @board.clamp(5,10,2), 5
+  end
 end
