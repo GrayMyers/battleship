@@ -14,7 +14,6 @@ class Computer
       Ship.new(name, length)
     end
   end
-  # @ships.each do |ship|
 
   def generate_coordinates(length)
     coords = [@board.cells.keys.sample]
@@ -27,14 +26,10 @@ class Computer
       next_coord = @board.adjacent_cells(coords[-1])[dir]
       if @board.valid_coordinate?(next_coord)
         coords << next_coord
-      elsif dir == :down
-        coords << @board.adjacent_cells(coords[0])[:up]
-      elsif dir == :up
-        coords << @board.adjacent_cells(coords[0])[:down]
-      elsif dir == :left
-        coords << @board.adjacent_cells(coords[0])[:right]
-      elsif dir == :right
-        coords << @board.adjacent_cells(coords[0])[:left]
+      else
+        directions = {:down=>:up, :up=>:down, :left=>:right, :right=>:left}
+        opposite = directions[dir]
+        coords << @board.adjacent_cells(coords[0])[opposite]
       end
     end
     coords = coords.sort
