@@ -131,8 +131,8 @@ class BoardTest < Minitest::Test
   end
 
   def test_clamp
-    assert_equal @board.clamp(5,3,2), 3
-    assert_equal @board.clamp(-5,3,2), 2
-    assert_equal @board.clamp(5,10,2), 5
+    assert_equal [false, 3],@board.clamp(5,3,2)
+    assert_equal [false, 2],@board.clamp(-5,3,2)
+    assert_equal [true, 5],@board.clamp(5,10,2)
   end
 end
