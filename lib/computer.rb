@@ -5,8 +5,10 @@ require './lib/ship'
 class Computer
   attr_reader :board, :ships
 
-  def initialize(width = 4,height = 4)
+  def new_board(width = 4,height = 4)
     @board = Board.new(width, height)
+    create_ships
+    place_ships
   end
 
   def create_ships(ship_types = {"Cruiser"=> 3, "Sumbarine"=> 2})

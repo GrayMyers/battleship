@@ -8,7 +8,7 @@ require './lib/ship'
 class ComputerTest < Minitest::Test
   def setup
     @computer = Computer.new
-    @computer.create_ships
+    @computer.new_board
     @user_board = Board.new
   end
 
@@ -38,8 +38,6 @@ class ComputerTest < Minitest::Test
   end
 
   def test_it_can_place_ships
-    @computer.place_ships
-
     assert_equal 5, @computer.board.render(true).count("S")
   end
 
