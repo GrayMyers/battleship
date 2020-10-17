@@ -3,7 +3,7 @@ require './lib/ship.rb'
 require './lib/cell.rb'
 
 class UserInterface
-  attr_reader :user_board, :computer_board, :ships
+  attr_reader :user_board, :computer_board, :user_ships, :computer_ships
 
   def setup
     board_pair = create_board
@@ -50,28 +50,26 @@ class UserInterface
     end
   end
 
-
   def prompt_ship_placement
     output_str = "I have laid out my ships on the grid.\n"
     output_str += "You now need to lay out your two ships\n" #CHANGE LATER
     ship_info_str = ""
-    ships.each do |ship|
+    @user_ships.each do |ship|
       ship_info_str += "the #{ship.name} is #{ship.length} units long and "
     end
     output_str + ship_info_str[0..-6].capitalize + "."
   end
 
   def determine_ship_placement #untestable due to input required in block
-    ships_to_place = @user_ships
-    while ships_to_place.length > 0
-      ship = ships_to_place[0]
+    ships_index = 0
+    while ships_index < (@user_ships.length)
+      ship = @user_ships[ships_index]
       display_user_board
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       until determine_placement_of(ship,take_input(false)) do
         puts "Those are invalid coordinates. Please try again: "
       end
-      ships_to_place.shift
-
+      ships_index += 1
     end
   end
 
@@ -85,9 +83,8 @@ class UserInterface
     end
   end
 
-
   def prompt_shot
-    puts "Enter the coordinate for your shot:"
+    "Enter the coordinate for your shot:"
   end
 
   def determine_shot #untestable due to input required in block
@@ -153,7 +150,7 @@ class UserInterface
 
   def turn
     display_turn_boards
-    prompt_shot
+    puts prompt_shot
     determine_shot
   end
 
@@ -165,9 +162,9 @@ class UserInterface
       ship.sunk?
     end
     if c_ships_sunk
-      :player
+      "You won."
     elsif p_ships_sunk
-      :computer
+      "I won."
     else
       nil
     end

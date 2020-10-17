@@ -6,7 +6,7 @@ class Computer
   attr_reader :board, :ships, :user_board
 
   def setup(user_board, computer_board, ships)
-    @board = board
+    @board = computer_board
     @user_board = user_board
     @ships = ships
   end
@@ -52,10 +52,11 @@ class Computer
     target = available_cells.keys.sample
   end
 
-  def fire_on_user
-    target = select_target(@user_board)
+  def turn
+    target = select_target
     if target != nil
       @user_board.cells[target].fire_upon
     end
+    #output result of shot
   end
 end
