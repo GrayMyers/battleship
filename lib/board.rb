@@ -11,7 +11,9 @@ class Board
   end
 
   def clamp(num,min,max)
-    result != num, [min,num,max].sort[1]
+    result = [min,num,max].sort[1]
+    success = result == num
+    return success, result
   end
 
   def create_empty_cells(width,height)
@@ -21,10 +23,10 @@ class Board
     xsuccess, width = clamp(width,default_min,default_x_max)
     ysuccess, height = clamp(height,default_min,default_y_max)
     if !xsuccess
-      puts "Your input for the horizontal board size was out of bounds and set to #{result}."
+      puts "Your input for the horizontal board size was out of bounds and set to #{width}."
     end
     if !ysuccess
-      puts "Your input for the vertical board size was out of bounds and set to #{result}."
+      puts "Your input for the vertical board size was out of bounds and set to #{height}."
     end
     letters = [*"A".."Z"]
     cells = {}
@@ -57,9 +59,8 @@ class Board
       cell1, cell2 = pair
       adjacent_cells(cell1).key(cell2)
     end
-    results.all? do |result|
-      results.uniq.count == 1 && results[0]
-    end
+    
+    results.uniq.count == 1 && !!results[0]
   end
 
   def adjacent_cells(cell)
