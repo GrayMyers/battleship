@@ -3,12 +3,29 @@ require './lib/ship.rb'
 require './lib/cell.rb'
 
 class UserInterface
-  attr_reader :player_board, :computer_board, :ships
-  def initialize(player_board,computer_board,player_ships,computer_ships)
-    @player_board = player_board
-    @computer_board = computer_board
-    @player_ships = player_ships
-    @computer_ships = computer_ships
+  attr_reader :user_board, :computer_board, :ships
+
+  def setup
+    board_pair = create_board
+    ships_pair = create_ships
+    @user_board = board_pair[0]
+    @computer_board = board_pair[1]
+    @user_ships = ships_pair[0]
+    @computer_ships = ships_pair[1]
+  end
+
+  def create_ships(defaults = true)
+    if defaults
+      [[Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)],[Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)]]
+    else
+    end
+  end
+
+  def create_board(defaults = true)
+    if defaults
+      [Board.new(4,4),Board.new(4,4)]
+    else
+    end
   end
 
   def prompt_play
@@ -45,10 +62,10 @@ class UserInterface
   end
 
   def determine_ship_placement #untestable due to input required in block
-    ships_to_place = @player_ships
+    ships_to_place = @user_ships
     while ships_to_place.length > 0
       ship = ships_to_place[0]
-      display_player_board
+      display_user_board
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       until determine_placement_of(ship,take_input(false)) do
         puts "Those are invalid coordinates. Please try again: "
@@ -60,8 +77,8 @@ class UserInterface
 
   def determine_placement_of(ship,input)
     processed_input = input.gsub(",", " ").split(" ")
-    if @player_board.valid_placement?(ship,processed_input)
-      @player_board.place(ship,processed_input)
+    if @user_board.valid_placement?(ship,processed_input)
+      @user_board.place(ship,processed_input)
       true
     else
       false
@@ -111,11 +128,11 @@ class UserInterface
     puts "=============COMPUTER BOARD============="
     display_computer_board
     puts "==============PLAYER BOARD=============="
-    display_player_board
+    display_user_board
   end
 
-  def display_player_board
-    puts @player_board.render(true)
+  def display_user_board
+    puts @user_board.render(true)
   end
 
   def display_computer_board(hide_ships = false)
@@ -144,7 +161,7 @@ class UserInterface
     c_ships_sunk = @computer_ships.all? do |ship|
       ship.sunk?
     end
-    p_ships_sunk = @player_ships.all? do |ship|
+    p_ships_sunk = @user_ships.all? do |ship|
       ship.sunk?
     end
     if c_ships_sunk

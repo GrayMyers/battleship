@@ -3,19 +3,19 @@ require './lib/cell'
 require './lib/ship'
 
 class Computer
-  attr_reader :board, :ships
+  attr_reader :board, :ships, :user_board
 
-  def new_board(width = 4,height = 4)
-    @board = Board.new(width, height)
-    create_ships
-    place_ships
+  def setup(user_board, computer_board, ships)
+    @board = board
+    @user_board = user_board
+    @ships = ships
   end
 
-  def create_ships(ship_types = {"Cruiser"=> 3, "Sumbarine"=> 2})
-    @ships = ship_types.map do |name, length|
-      Ship.new(name, length)
-    end
-  end
+  # def create_ships(ship_types = {"Cruiser"=> 3, "Sumbarine"=> 2})
+  #   @ships = ship_types.map do |name, length|
+  #     Ship.new(name, length)
+  #   end
+  # end
 
   def generate_coordinates(length)
     coords = [@board.cells.keys.sample]
@@ -47,15 +47,15 @@ class Computer
     end
   end
 
-  def select_target(user_board)
-    available_cells = user_board.cells.select {|coord, cell| !cell.fired_upon?}
+  def select_target
+    available_cells = @user_board.cells.select {|coord, cell| !cell.fired_upon?}
     target = available_cells.keys.sample
   end
 
-  def fire_on_user(user_board)
-    target = select_target(user_board)
+  def fire_on_user
+    target = select_target(@user_board)
     if target != nil
-      user_board.cells[target].fire_upon
+      @user_board.cells[target].fire_upon
     end
   end
 end
