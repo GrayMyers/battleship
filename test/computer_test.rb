@@ -9,6 +9,7 @@ class ComputerTest < Minitest::Test
   def setup
     @computer = Computer.new
     @computer.create_ships
+    @user_board = Board.new
   end
 
   def test_it_exists
@@ -42,13 +43,27 @@ class ComputerTest < Minitest::Test
     assert_equal 5, @computer.board.render(true).count("S")
   end
 
-  def test_it_can_choose_a_random_coordinate_to_fire_on
-  end
-
   def test_it_can_choose_a_valid_coordinate_to_fire_on
+    target = @computer.select_target(@user_board)
+    assert_equal String, target.class
+    assert_equal true, @user_board.valid_coordinate?(target)
+    assert_equal false, @user_board.cells[target].fired_upon?
   end
 
-  def test_it_does_not_duplicate_shots
+  def test_fire_on_user
+    assert_equal 0, @user_board.render.count("M")
+
+    @computer.fire_on_user(@user_board)
+    assert_equal 1, @user_board.render.count("M")
+
+    @computer.fire_on_user(@user_board)
+    assert_equal 2, @user_board.render.count("M")
+
+    14.times do
+      @computer.fire_on_user(@user_board)
+    end
+    assert_equal 16, @user_board.render.count("M")
   end
 
+  # assert_equal 16, @computer.fire_on_user(@user_board)
 end

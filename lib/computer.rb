@@ -5,7 +5,7 @@ require './lib/ship'
 class Computer
   attr_reader :board, :ships
 
-  def initialize(width = 8,height = 8)
+  def initialize(width = 4,height = 4)
     @board = Board.new(width, height)
   end
 
@@ -43,5 +43,14 @@ class Computer
       end
       @board.place(ship,coords)
     end
+  end
+
+  def select_target(user_board)
+    available_cells = user_board.cells.select {|coord, cell| !cell.fired_upon?}
+    target = available_cells.keys.sample
+  end
+
+  def fire_on_user(user_board)
+    user_board.cells[select_target(user_board)].fire_upon
   end
 end
