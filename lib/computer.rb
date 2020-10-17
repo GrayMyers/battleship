@@ -13,22 +13,13 @@ class Computer
 
   def generate_coordinates(length)
     coords = [@board.cells.keys.sample]
-    coords << @board.adjacent_cells(coords[0]).values.shuffle.find do |value|
-      @board.valid_coordinate?(value)
-    end
-    (length-2).times do |number|
-      coords = coords.sort
-      dir = @board.adjacent_cells(coords[-2]).key(coords[-1])
-      next_coord = @board.adjacent_cells(coords[-1])[dir]
-      if @board.valid_coordinate?(next_coord)
-        coords << next_coord
-      else
-        directions = {:down=>:up, :up=>:down, :left=>:right, :right=>:left}
-        opposite = directions[dir]
-        coords << @board.adjacent_cells(coords[0])[opposite]
+    until coords.length == length
+      adjacent_coords = @board.cells.keys.select do |key|
+        @board.consecutive?([coords, key].flatten.sort)
       end
+      coords << adjacent_coords.sample
     end
-    coords = coords.sort
+    coords.sort!
   end
 
   def place_ships
