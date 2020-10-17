@@ -19,6 +19,9 @@ class ComputerTest < Minitest::Test
   end
 
   def test_it_can_create_ships
+    @computer.create_ships({"Cruiser"=> 3, "Sumbarine"=> 2})
+    assert_instance_of Ship, @computer.ships[0]
+    assert_instance_of Ship, @computer.ships[1]    
   end
 
   def test_it_can_generate_a_ship_placement
