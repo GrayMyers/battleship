@@ -39,16 +39,17 @@ class UserInterface
     get_requested_input("P", "Q")
   end
 
-  def get_requested_input(continue_key, break_key)
+  def get_requested_input(continue_key, break_key, message = "Please enter a valid option.")
     loop do
       input = gets.chomp.upcase
       if input == continue_key
         return :continue
         break
       elsif input == break_key
+        return :break
         break
       else
-        puts "Please enter a valid option."
+        puts message
       end
     end
   end
@@ -70,9 +71,9 @@ class UserInterface
 
   def custom_board
     print "Enter custom board width: "
-    @width = gets.chomp.to_i
+    @board_width = gets.chomp.to_i
     print "Enter custom board width: "
-    @height = gets.chomp.to_i
+    @board_height = gets.chomp.to_i
   end
 
   def custom_ships
@@ -83,16 +84,25 @@ class UserInterface
       name = gets.chomp.to_s.capitalize
       print "Enter #{name} length: "
       length = gets.chomp.to_i
+        until 1 < length && length < [@board_width, @board_height].max do
+          if length < 1
+            print "Length cannot be smaller than 1. Please enter another value: "
+            length = gets.chomp.to_i
+          elsif length > [@board_width, @board_height].max
+            print "Length exceeds board size. Please enter another value: "
+            length = gets.chomp.to_i
+          end
+        end
       @ships << [name, length]
       puts "Created custom ship #{name} with length #{length} units"
-      print "Enter 'c' to create another ship, or press 'd' for done."
+      puts "Enter 'c' to create another ship, or press 'd' for done."
       input = get_requested_input("D","C")
     end
   end
 
   def prompt_ship_placement
-    puts "I have laid out my ships on the grid.\n" +
-          "You now need to lay out your #{@user_ships.length} ships:"
+    "I have laid out my ships on the grid.\n" +
+    "You now need to lay out your #{@user_ships.length} ships:"
     @user_ships.map do |ship|
       "The #{ship.name} is #{ship.length} units long"
     end
