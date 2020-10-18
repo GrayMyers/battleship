@@ -84,17 +84,21 @@ class UserInterface
       name = gets.chomp.to_s.capitalize
       print "Enter #{name} length: "
       length = gets.chomp.to_i
-        until 1 < length && length < [@board_width, @board_height].max do
-          if length < 1
-            print "Length cannot be smaller than 1. Please enter another value: "
-            length = gets.chomp.to_i
-          elsif length > [@board_width, @board_height].max
-            print "Length exceeds board size. Please enter another value: "
-            length = gets.chomp.to_i
-          end
+      until 0 < length && length <= [@board_width, @board_height].max do
+        if length < 1
+          print "Length cannot be smaller than 1. Please enter another value: "
+          length = gets.chomp.to_i
+        elsif length > [@board_width, @board_height].max
+          print "Length exceeds board size. Please enter another value: "
+          length = gets.chomp.to_i
         end
-      @ships << [name, length]
-      puts "Created custom ship #{name} with length #{length} units"
+      end
+      if (length + @ships.sum {|ship| ship[1]}) > (@board_width * @board_height)
+        puts "There is not enough space left on the board for a ship of this length. #{name} cannot be created."
+      else
+        @ships << [name, length]
+        puts "Created custom ship #{name} with length #{length} units"
+      end
       puts "Enter 'c' to create another ship, or press 'd' for done."
       input = get_requested_input("D","C")
     end
