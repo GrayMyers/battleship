@@ -22,6 +22,7 @@ class UserInterface
 
   def create_ships
     ships = []
+    @ships.sort_by! {|ship| -ship[-1]}
     2.times do
       ships << @ships.map do |ship|
         Ship.new(ship[0], ship[1])
