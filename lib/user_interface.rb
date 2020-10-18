@@ -91,13 +91,11 @@ class UserInterface
   end
 
   def prompt_ship_placement
-    output_str = "I have laid out my ships on the grid.\n"
-    output_str += "You now need to lay out your two ships\n" #CHANGE LATER
-    ship_info_str = ""
-    @user_ships.each do |ship|
-      ship_info_str += "the #{ship.name} is #{ship.length} units long and "
+    puts "I have laid out my ships on the grid.\n" +
+          "You now need to lay out your #{@user_ships.length} ships:"
+    @user_ships.map do |ship|
+      "The #{ship.name} is #{ship.length} units long"
     end
-    output_str + ship_info_str[0..-6].capitalize + "."
   end
 
   def determine_ship_placement #untestable due to input required in block
