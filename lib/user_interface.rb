@@ -5,27 +5,33 @@ require './lib/cell.rb'
 class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
 
+  def initialize
+    @board_width = 4
+    @board_height = 4
+    @ships = [["Cruiser", 3], ["Sumbarine", 2]]
+  end
+
   def setup
-    board_pair = create_board(@default_board)
-    ships_pair = create_ships(@default_ships)
+    board_pair = create_board
+    ships_pair = create_ships
     @user_board = board_pair[0]
     @computer_board = board_pair[1]
     @user_ships = ships_pair[0]
     @computer_ships = ships_pair[1]
   end
 
-  def create_ships(defaults = true)
-    if defaults
-      [[Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)],[Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)]]
-    else
+  def create_ships
+    ships = []
+    2.times do
+      ships << @ships.map do |ship|
+        Ship.new(ship[0], ship[1])
+      end
     end
+    ships
   end
 
-  def create_board(defaults = true)
-    if defaults
-      [Board.new(4,4),Board.new(4,4)]
-    else
-    end
+  def create_board
+    [Board.new(@board_width,@board_height),Board.new(@board_width,@board_height)]
   end
 
   def determine_play
@@ -52,6 +58,7 @@ class UserInterface
     if get_requested_input("C","D") == :continue
       print "Choose board size? (y/n) "
       if get_requested_input("Y", "N") == :continue
+        @default_board = false
         custom_board
       end
       print "Create custom ships? (y/n) "
@@ -62,7 +69,6 @@ class UserInterface
   end
 
   def custom_board
-    @default_board = false
     print "Enter custom board width: "
     @width = gets.chomp.to_i
     print "Enter custom board width: "
@@ -70,7 +76,6 @@ class UserInterface
   end
 
   def custom_ships
-    @default_ships = false
     @ships = []
     input = ""
     until input == :continue
