@@ -28,25 +28,22 @@ class UserInterface
     end
   end
 
-  def prompt_play
-    "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit."
-  end
-
   def determine_play
-    puts prompt_play
-    until input = process_play(take_input(false)) do
-      puts "Please enter a valid option."
-    end
-    input
+    puts "Welcome to BATTLESHIP\nEnter 'p' to play. Enter 'q' to quit."
+    get_input("P", "Q")
   end
 
-  def process_play(input)
-    if input == "P"
-      :play
-    elsif input == "Q"
-      :quit
-    else
-      nil
+  def get_requested_input(continue_key, break_key)
+    loop do
+      input = gets.chomp.upcase
+      if input == continue_key
+        return :continue
+        break
+      elsif input == break_key
+        break
+      else
+        puts "Please enter a valid option."
+      end
     end
   end
 

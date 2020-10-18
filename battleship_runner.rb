@@ -8,7 +8,7 @@ $computer = Computer.new
 
 def prompt_play
   option = $ui.determine_play
-  if option == :play
+  if option == :continue
     play_game
   end
 end
