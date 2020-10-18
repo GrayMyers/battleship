@@ -6,8 +6,8 @@ class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
 
   def setup
-    board_pair = create_board
-    ships_pair = create_ships
+    board_pair = create_board(@default_board)
+    ships_pair = create_ships(@default_ships)
     @user_board = board_pair[0]
     @computer_board = board_pair[1]
     @user_ships = ships_pair[0]
@@ -30,7 +30,7 @@ class UserInterface
 
   def determine_play
     puts "Welcome to BATTLESHIP\nEnter 'p' to play. Enter 'q' to quit."
-    get_input("P", "Q")
+    get_requested_input("P", "Q")
   end
 
   def get_requested_input(continue_key, break_key)
@@ -44,6 +44,44 @@ class UserInterface
       else
         puts "Please enter a valid option."
       end
+    end
+  end
+
+  def query_custom
+    puts "Enter 'd' to play with default settings,  or enter 'c' to create a custom board and ships."
+    if get_requested_input("C","D") == :continue
+      print "Choose board size? (y/n) "
+      if get_requested_input("Y", "N") == :continue
+        custom_board
+      end
+      print "Create custom ships? (y/n) "
+      if get_requested_input("Y", "N") == :continue
+        custom_ships
+      end
+    end
+  end
+
+  def custom_board
+    @default_board = false
+    print "Enter custom board width: "
+    @width = gets.chomp.to_i
+    print "Enter custom board width: "
+    @height = gets.chomp.to_i
+  end
+
+  def custom_ships
+    @default_ships = false
+    @ships = []
+    input = ""
+    until input == :continue
+      print "Enter custom ship name: "
+      name = gets.chomp.to_s.capitalize
+      print "Enter #{name} length: "
+      length = gets.chomp.to_i
+      @ships << [name, length]
+      puts "Created custom ship #{name} with length #{length} units"
+      print "Enter 'c' to create another ship, or press 'd' for done."
+      input = get_requested_input("D","C")
     end
   end
 

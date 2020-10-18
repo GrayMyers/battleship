@@ -27,8 +27,4 @@ class UserInterfaceTest < Minitest::Test
     assert @ui.user_board != @computer.board
   end
 
-  def test_it_prompts_play
-    assert_equal "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.", @ui.prompt_play
-  end
-
 end
