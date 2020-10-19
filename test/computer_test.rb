@@ -8,19 +8,22 @@ require './lib/ship'
 class ComputerTest < Minitest::Test
   def setup
     @computer = Computer.new
-    @computer.new_board
     @user_board = Board.new
+    @computer_board = Board.new
+    ships = [Ship.new("Cruiser", 3), Ship.new("Submarine", 2)]
+    @computer.setup(@user_board, @computer_board, ships)
   end
 
   def test_it_exists
     assert_instance_of Computer, @computer
   end
 
-  def test_it_can_create_a_board
+  def test_it_has_a_board
     assert_instance_of Board, @computer.board
+    assert_equal true, @computer.board != @user_board
   end
 
-  def test_it_can_create_ships
+  def test_it_has_ships
     assert_instance_of Ship, @computer.ships[0]
     assert_instance_of Ship, @computer.ships[1]
   end
@@ -34,37 +37,37 @@ class ComputerTest < Minitest::Test
 
     assert_equal true, coordinates.all? {|coord| @computer.board.valid_coordinate?(coord)}
     assert_equal true, @computer.board.consecutive?(coordinates)
-    assert_equal true, coordinates.each_cons(2).all? {|pair| @computer.board.consecutive?(pair)}
   end
 
   def test_it_can_place_ships
+    @computer.place_ships
     assert_equal 5, @computer.board.render(true).count("S")
   end
 
   def test_it_can_choose_a_valid_coordinate_to_fire_on
-    target = @computer.select_target(@user_board)
+    target = @computer.select_target
     assert_equal String, target.class
     assert_equal true, @user_board.valid_coordinate?(target)
     assert_equal false, @user_board.cells[target].fired_upon?
   end
 
-  def test_fire_on_user
+  def test_turn
     assert_equal 0, @user_board.render.count("M")
 
-    @computer.fire_on_user(@user_board)
+    @computer.turn
     assert_equal 1, @user_board.render.count("M")
 
-    @computer.fire_on_user(@user_board)
+    @computer.turn
     assert_equal 2, @user_board.render.count("M")
-
   end
 
   def test_it_does_not_create_an_endless_loop_if_all_cells_have_been_fired_on
     16.times do
-      @computer.fire_on_user(@user_board)
+      @computer.turn
     end
 
     assert_equal 16, @user_board.render.count("M")
-    assert_equal nil, @computer.fire_on_user(@user_board)
+    @computer.turn
+    assert_equal 16, @user_board.render.count("M")
   end
 end

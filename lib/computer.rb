@@ -11,30 +11,15 @@ class Computer
     @ships = ships
   end
 
-  # def create_ships(ship_types = {"Cruiser"=> 3, "Sumbarine"=> 2})
-  #   @ships = ship_types.map do |name, length|
-  #     Ship.new(name, length)
-  #   end
-  # end
-
   def generate_coordinates(length)
     coords = [@board.cells.keys.sample]
-    coords << @board.adjacent_cells(coords[0]).values.shuffle.find do |value|
-      @board.valid_coordinate?(value)
-    end
-    (length-2).times do |number|
-      coords = coords.sort
-      dir = @board.adjacent_cells(coords[-2]).key(coords[-1])
-      next_coord = @board.adjacent_cells(coords[-1])[dir]
-      if @board.valid_coordinate?(next_coord)
-        coords << next_coord
-      else
-        directions = {:down=>:up, :up=>:down, :left=>:right, :right=>:left}
-        opposite = directions[dir]
-        coords << @board.adjacent_cells(coords[0])[opposite]
+    until coords.length == length
+      adjacent_coords = @board.cells.keys.select do |key|
+        @board.consecutive?([coords, key].flatten.sort)
       end
+      coords << adjacent_coords.sample
     end
-    coords = coords.sort
+    coords.sort!
   end
 
   def place_ships
@@ -56,7 +41,18 @@ class Computer
     target = select_target
     if target != nil
       @user_board.cells[target].fire_upon
+      display_shot_result(target)
     end
-    #output result of shot
+  end
+
+  def display_shot_result(target)
+    ship = @user_board.cells[target].ship
+    if ship == nil
+      puts "My shot on #{target} was a miss."
+    elsif ship.sunk?
+      puts "My shot on #{target} was a miss.\n I sunk your #{ship.name}!"
+    else
+      puts "My shot on #{target} was a hit."
+    end
   end
 end
