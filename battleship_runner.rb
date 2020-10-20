@@ -8,7 +8,8 @@ $computer = Computer.new
 
 def prompt_play
   option = $ui.determine_play
-  if option == :play
+  if option == :continue
+    $ui.query_custom
     play_game
   end
 end
@@ -16,8 +17,8 @@ end
 def play_game
   $ui.setup
   $computer.setup($ui.user_board, $ui.computer_board, $ui.computer_ships)
-  puts $ui.prompt_ship_placement
   $computer.place_ships
+  puts $ui.prompt_ship_placement
   $ui.determine_ship_placement
   until winner = $ui.winner do
     $ui.turn
