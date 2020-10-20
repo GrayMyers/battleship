@@ -17,7 +17,6 @@ class UserInterface
         return :continue
         break
       elsif input == break_key
-        return :break
         break
       else
         puts "Please enter a valid option."
@@ -45,20 +44,11 @@ class UserInterface
   def custom_ships
     @ships = []
     input = ""
-    until input == :continue
+    until input == :continue do
       print "Enter custom ship name: "
       name = gets.chomp.to_s.capitalize
       print "Enter #{name} length: "
-      length = gets.chomp.to_i
-      until 0 < length && length <= [@board_width, @board_height].max do
-        if length < 1
-          print "Length cannot be smaller than 1. Please enter another value: "
-          length = gets.chomp.to_i
-        elsif length > [@board_width, @board_height].max
-          print "Length exceeds board size. Please enter another value: "
-          length = gets.chomp.to_i
-        end
-      end
+      length = get_integer(1,[@board_width, @board_height].max, "Length")
       if (length + @ships.sum {|ship| ship[1]}) > (@board_width * @board_height)
         puts "There is not enough space left on the board for a ship of this length. #{name} cannot be created."
       else
@@ -68,9 +58,23 @@ class UserInterface
       puts "Enter 'c' to create another ship, or press 'd' for done."
       input = get_requested_input("D","C")
     end
+    @ships.sort_by! {|ship| -ship[-1]}
   end
 
-  def initialize
+  def get_integer(min, max, description)
+    input = gets.chomp.to_i
+    until input >= min && input <= max do
+      if input <= min
+        print "#{description} cannot be smaller than #{min}. Please enter another value: "
+      elsif input >= max
+        print "#{description} cannot be greater than #{max}. Please enter another value: "
+      end
+      input = gets.chomp.to_i
+    end
+    input
+  end
+
+def initialize
     @board_width = 4
     @board_height = 4
     @ships = [["Cruiser", 3], ["Sumbarine", 2]]
