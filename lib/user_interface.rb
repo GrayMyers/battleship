@@ -74,34 +74,29 @@ class UserInterface
     input
   end
 
-def initialize
-    @board_width = 4
-    @board_height = 4
-    @ships = [["Cruiser", 3], ["Sumbarine", 2]]
-  end
-
   def setup
-    board_pair = create_board
-    ships_pair = create_ships
-    @user_board = board_pair[0]
-    @computer_board = board_pair[1]
-    @user_ships = ships_pair[0]
-    @computer_ships = ships_pair[1]
+    @user_board = create_board
+    @computer_board = create_board
+    @user_ships = create_ships
+    @computer_ships = create_ships
   end
 
   def create_ships
-    ships = []
-    @ships.sort_by! {|ship| -ship[-1]}
-    2.times do
-      ships << @ships.map do |ship|
+    if @ships == nil
+      [Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)]
+    else
+      @ships.map do |ship|
         Ship.new(ship[0], ship[1])
       end
     end
-    ships
   end
 
   def create_board
-    [Board.new(@board_width,@board_height),Board.new(@board_width,@board_height)]
+    if @board_width == nil
+      Board.new
+    else
+      Board.new(@board_width, @board_height)
+    end
   end
 
   def prompt_ship_placement
