@@ -2,6 +2,7 @@ require './lib/user_interface.rb'
 require './lib/computer'
 require './lib/board.rb'
 require './lib/ship.rb'
+require './lib/custom_options'
 
 require 'minitest/autorun'
 require 'minitest/pride'
@@ -9,34 +10,45 @@ require 'mocha/minitest'
 
 class CustomOptionsTest < Minitest::Test
   def setup
-    @ui = UserInterface.new
-    @ui.setup
     @custom = CustomOptions.new
-    @computer = Computer.new
-    @computer.setup(@ui.user_board, @ui.computer_board, @ui.computer_ships)
   end
 
   def test_it_exists
     assert_instance_of CustomOptions, @custom
   end
 
-  def query_custom
-    @ui.stubs(:get_requested_input).returns(nil)
-    assert_nil @ui.query_custom
+  def test_query_board
+    @custom.stubs(:get_requested_input).returns(nil)
+    assert_nil @board_width
+    assert_nil @board_height
+    assert_nil @custom_board
+
+    @custom.stubs(:get_requested_input).returns(:continue)
+    @custom.expects(:custom_board).at_least_once
+    @custom.query_board
   end
 
-  def test_custom_board_dimensions
-    @ui.stubs(:get_integer).returns(5)
-    @ui.custom_board
-    @ui.setup
+  def test_custom_board
+    @custom.stubs(:get_integer).returns(5)
+    @custom.custom_board
 
-    assert_equal 25, @ui.user_board.cells.count
+    assert_equal 5, @custom.board_width
+    assert_equal 5, @custom.board_height
+  end
+
+  def test_query_ships
+    @custom.stubs(:get_requested_input).returns(nil)
+    assert_nil @custom_ships
+
+    @custom.stubs(:get_requested_input).returns(:continue)
+    @custom.expects(:custom_ships).at_least_once
+    @custom.query_ships
   end
 
   def test_custom_ships
     @ui.stubs(:ships).returns([["Battleship", 5], ["Destroyer", 4]])
     @ui.setup
-  require "pry"; binding.pry
+  # require "pry"; binding.pry
     assert_equal "Battleship", @ui.user_ships[0].name
   end
 

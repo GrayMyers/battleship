@@ -1,13 +1,39 @@
 require './lib/board.rb'
 require './lib/ship.rb'
 require './lib/cell.rb'
+require './lib/custom_options'
 
 class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
 
+  def get_requested_input(continue_key, break_key)
+    until (input = gets.chomp.to_s.upcase) == break_key
+      if input == continue_key
+        return :continue
+        break
+      else
+        puts "Please enter a valid option."
+      end
+    end
+  end
+
   def determine_play
     puts "Welcome to BATTLESHIP\nEnter 'p' to play. Enter 'q' to quit."
-    get_requested_input("P", "Q")
+    if (response = get_requested_input("P", "Q")) == :continue
+      query_custom
+    end
+    response
+  end
+
+  def query_custom
+    puts "Enter 'd' to play with default settings,  or enter 'c' to create a custom board and ships."
+    if get_requested_input("C","D") == :continue
+      @custom = CustomOptions.new
+      @custom.query_board
+      @custom.query_ships
+    else
+      @custom = nil
+    end
   end
 
   def setup
@@ -17,21 +43,21 @@ class UserInterface
     @computer_ships = create_ships
   end
 
-  def create_ships
-    if @ships == nil
-      [Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)]
+  def create_board
+    if @custom
+      Board.new(@custom.board_width, @custom.board_height)
     else
-      @ships.map do |ship|
-        Ship.new(ship[0], ship[1])
-      end
+      Board.new
     end
   end
 
-  def create_board
-    if @board_width = nil
-      Board.new
+  def create_ships
+    if @custom && @custom.ships != []
+      @custom.ships.map do |ship|
+        Ship.new(ship[0], ship[1])
+      end
     else
-      Board.new(@board_width, @board_height)
+      [Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)]
     end
   end
 
