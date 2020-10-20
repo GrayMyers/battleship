@@ -73,4 +73,25 @@ class CellTest < Minitest::Test
 
     assert_equal "X", cell_3.render(true)
   end
+
+
+  def test_adjacent_cells
+    b2 = Cell.new("B2")
+    c3 = Cell.new("C3")
+
+    adjacent_hash_B2 = {
+      up: "A2",
+      right: "B3",
+      left: "B1",
+      down: "C2"
+    }
+    adjacent_hash_C3 = {
+      up: "B3",
+      right: "C4",
+      left: "C2",
+      down: "D3"
+    }
+    assert_equal adjacent_hash_B2, b2.adjacent_cells
+    assert_equal adjacent_hash_C3, c3.board.adjacent_cells
+  end
 end
