@@ -107,26 +107,24 @@ class UserInterface
     end
   end
 
-  def determine_ship_placement #untestable due to input required in block
+  def determine_ship_placement
     ships_index = 0
     while ships_index < (@user_ships.length)
       ship = @user_ships[ships_index]
       display_user_board
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
-      until determine_placement_of(ship,take_input(false)) do
+      until place_ship(ship, input = gets.chomp.upcase) do
         puts "Those are invalid coordinates. Please try again: "
       end
       ships_index += 1
     end
   end
 
-  def determine_placement_of(ship,input)
+  def place_ship(ship,input)
     processed_input = input.gsub(",", " ").split(" ")
     if @user_board.valid_placement?(ship,processed_input)
       @user_board.place(ship,processed_input)
       true
-    else
-      false
     end
   end
 
