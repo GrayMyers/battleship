@@ -35,23 +35,6 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_coordinate?("A14")
   end
 
-  def test_adjacent_cells
-    adjacent_hash_B2 = {
-      up: "A2",
-      right: "B3",
-      left: "B1",
-      down: "C2"
-    }
-    adjacent_hash_C3 = {
-      up: "B3",
-      right: "C4",
-      left: "C2",
-      down: "D3"
-    }
-    assert_equal adjacent_hash_B2, @board.adjacent_cells("B2")
-    assert_equal adjacent_hash_C3, @board.adjacent_cells("C3")
-  end
-
   def test_consecutive
     assert_equal true, @board.consecutive?(["A1","A2","A3"])
     assert_equal false, @board.consecutive?(["B2","B4"])

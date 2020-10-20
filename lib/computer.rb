@@ -11,6 +11,12 @@ class Computer
     @ships = ships
   end
 
+  # def create_ships(ship_types = {"Cruiser"=> 3, "Sumbarine"=> 2})
+  #   @ships = ship_types.map do |name, length|
+  #     Ship.new(name, length)
+  #   end
+  # end
+
   def generate_coordinates(length)
     coords = [@board.cells.keys.sample]
     until coords.length == length
@@ -33,26 +39,68 @@ class Computer
   end
 
   def select_target
-    available_cells = @user_board.cells.select {|coord, cell| !cell.fired_upon?}
-    target = available_cells.keys.sample
+    if @int_target && !@direction
+      #hit a ship last turn but doesn't know which direction it is facing
+
+      available_hash = @int_target.adjacent_cells.select {|direction, coord| @user_board.cells[coord] && !@user_board.cells[coord].fired_upon?}
+      available_cells = available_hash.values
+    
+    elsif @int_target
+      #knows ship and direction
+      if @direction == :x
+        aligned = except(@int_target.adjacent_cells,[:up,:down])
+      else
+        aligned = except(@int_target.adjacent_cells,[:left,:right])
+      end
+      available_hash = aligned.select {|direction, coord| @user_board.cells[coord] && !@user_board.cells[coord].fired_upon?}
+      available_cells = available_hash.values
+
+    else
+      #knows no locations of ships
+      available_hash = @user_board.cells.select {|coord, cell| !cell.fired_upon?}
+      available_cells = available_hash.keys
+    end
+    index = @direction == :x ? 0 : 1
+    if available_cells.length == 0
+      available_cells = @user_board.cells.select {|coord, cell| @int_target.coordinate[index] == cell.coordinate[index] && !cell.fired_upon?}.keys
+    end
+
+    available_cells.sample
+
   end
 
   def turn
     target = select_target
+    cell = @user_board.cells[target]
     if target != nil
-      @user_board.cells[target].fire_upon
-      display_shot_result(target)
+      cell.fire_upon
+      if !cell.empty? #hit
+        if @int_target && !@direction
+          @direction = @int_target.coordinate[0] == target[0] ? :x : :y
+          @int_target = cell
+
+        elsif @direction
+          @int_target = cell
+        else
+          @int_target = cell
+        end
+        if cell.ship.sunk?
+          @int_target = nil
+          @direction = nil
+          puts "I sunk your #{cell.ship.name}!"
+        end
+        puts "My shot on #{target} was a hit."
+      else #miss
+        puts "My shot on #{target} was a miss."
+      end
     end
+    #output result of shot
   end
 
-  def display_shot_result(target)
-    ship = @user_board.cells[target].ship
-    if ship == nil
-      puts "My shot on #{target} was a miss."
-    elsif ship.sunk?
-      puts "My shot on #{target} was a miss.\n I sunk your #{ship.name}!"
-    else
-      puts "My shot on #{target} was a hit."
+  def except(hash,keys) #I do not know why this isn't included with ruby
+    keys.each do |k|
+      hash.delete(k)
     end
+    hash
   end
 end
