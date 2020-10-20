@@ -17,6 +17,7 @@ class UserInterface
         return :continue
         break
       elsif input == break_key
+        return :break
         break
       else
         puts "Please enter a valid option."
@@ -28,9 +29,16 @@ class UserInterface
     puts "Enter 'd' to play with default settings,  or enter 'c' to create a custom board and ships."
     if get_requested_input("C","D") == :continue
       print "Choose board size? (y/n) "
-      custom_board if get_requested_input("Y", "N") == :continue
+      if get_requested_input("Y", "N") == :continue
+        custom_board
+      else
+        @board_width = 4
+        @board_height = 4
+      end
       print "Create custom ships? (y/n) "
-      custom_ships if get_requested_input("Y", "N") == :continue
+      if get_requested_input("Y", "N") == :continue
+        custom_ships
+      end
     end
   end
 
@@ -92,11 +100,7 @@ class UserInterface
   end
 
   def create_board
-    if @board_width == nil
-      Board.new
-    else
       Board.new(@board_width, @board_height)
-    end
   end
 
   def prompt_ship_placement
