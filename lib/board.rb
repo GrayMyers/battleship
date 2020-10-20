@@ -57,19 +57,14 @@ class Board
   def consecutive?(coords)
     results = coords.each_cons(2).map do |pair|
       cell1, cell2 = pair
-      adjacent_cells(cell1).key(cell2)
+      if @cells.key?(cell1)
+        @cells[cell1].adjacent_cells.key(cell2)
+      else
+        nil
+      end
     end
-    
-    results.uniq.count == 1 && !!results[0]
-  end
 
-  def adjacent_cells(cell)
-    {
-      up: (cell[0].ord - 1).chr + cell[1],
-      down: (cell[0].ord + 1).chr + cell[1],
-      left: cell[0] + (cell[1].to_i - 1).to_s,
-      right: cell[0] + (cell[1].to_i + 1).to_s
-    }
+    results.uniq.count == 1 && !!results[0]
   end
 
   def place(ship,coords)

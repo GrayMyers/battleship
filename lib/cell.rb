@@ -24,6 +24,15 @@ class Cell
     end
     @fired_upon = true
   end
+  def adjacent_cells
+    cell = @coordinate
+    {
+      up: (cell[0].ord - 1).chr + cell[1],
+      down: (cell[0].ord + 1).chr + cell[1],
+      left: cell[0] + (cell[1].to_i - 1).to_s,
+      right: cell[0] + (cell[1].to_i + 1).to_s
+    }
+end
 
   def render(render_ships = false)
     if empty? && fired_upon?
