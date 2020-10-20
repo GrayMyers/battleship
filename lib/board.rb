@@ -10,7 +10,7 @@ class Board
     @height = height
   end
 
-  def create_empty_cells(width,height)
+  def create_empty_cells(width, height)
     letters = [*"A".."Z"]
     cells = {}
     width.times do |x|

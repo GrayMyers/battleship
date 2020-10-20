@@ -7,24 +7,17 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require 'mocha/minitest'
 
-class UserInterfaceTest < Minitest::Test
+class CustomOptionsTest < Minitest::Test
   def setup
     @ui = UserInterface.new
     @ui.setup
+    @custom = CustomOptions.new
     @computer = Computer.new
     @computer.setup(@ui.user_board, @ui.computer_board, @ui.computer_ships)
   end
 
   def test_it_exists
-    assert_instance_of UserInterface, @ui
-  end
-
-  def test_determine_play
-    @ui.stubs(:get_requested_input).returns(:continue)
-    assert_equal :continue, @ui.determine_play
-
-    @ui.stubs(:get_requested_input).returns(nil)
-    assert_nil @ui.determine_play
+    assert_instance_of CustomOptions, @custom
   end
 
   def query_custom
@@ -45,16 +38,6 @@ class UserInterfaceTest < Minitest::Test
     @ui.setup
   require "pry"; binding.pry
     assert_equal "Battleship", @ui.user_ships[0].name
-
-
   end
 
-  def test_it_creates_separate_objects_for_user_and_computer
-    assert_instance_of Ship, @ui.user_ships[0]
-    assert_instance_of Ship, @ui.computer_ships[0]
-    assert_instance_of Board, @ui.user_board
-    assert_instance_of Board, @ui.computer_board
-    assert @ui.user_board != @ui.computer_board
-    assert @ui.user_board != @computer.board
-  end
 end

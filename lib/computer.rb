@@ -44,7 +44,7 @@ class Computer
 
       available_hash = @int_target.adjacent_cells.select {|direction, coord| @user_board.cells[coord] && !@user_board.cells[coord].fired_upon?}
       available_cells = available_hash.values
-    
+
     elsif @int_target
       #knows ship and direction
       if @direction == :x
