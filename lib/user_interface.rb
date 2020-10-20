@@ -128,11 +128,28 @@ class UserInterface
     end
   end
 
-  def prompt_shot
-    "Enter the coordinate for your shot:"
+  def turn
+    display_turn_boards
+    puts "Enter the coordinate for your shot:"
+    determine_shot
   end
 
-  def determine_shot #untestable due to input required in block
+  def display_turn_boards
+    puts "\n=============COMPUTER BOARD============="
+    display_computer_board
+    puts "==============PLAYER BOARD=============="
+    display_user_board
+  end
+
+  def display_user_board
+    puts @user_board.render(true)
+  end
+
+  def display_computer_board
+    puts @computer_board.render
+  end
+
+  def determine_shot
     until rtrn = input_shot(take_input(false)) do
       if rtrn == false
         puts "You already shot there.  Please pick a new coordinate:"
@@ -166,39 +183,6 @@ class UserInterface
     end
   end
 
-  def display_turn_boards
-    puts "=============COMPUTER BOARD============="
-    display_computer_board
-    puts "==============PLAYER BOARD=============="
-    display_user_board
-  end
-
-  def display_user_board
-    puts @user_board.render(true)
-  end
-
-  def display_computer_board(hide_ships = false)
-    puts @computer_board.render(hide_ships)
-  end
-
-  def take_input(case_sensitive,show_input_symbol = true)
-    if show_input_symbol
-      print "> "
-    end
-    input = gets.chomp()
-    if !case_sensitive
-      input.upcase
-    else
-      input
-    end
-  end
-
-  def turn
-    display_turn_boards
-    puts prompt_shot
-    determine_shot
-  end
-
   def winner
     c_ships_sunk = @computer_ships.all? do |ship|
       ship.sunk?
@@ -214,5 +198,6 @@ class UserInterface
       nil
     end
   end
+
 
 end
