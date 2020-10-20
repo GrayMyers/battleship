@@ -33,7 +33,7 @@ class Board
       end
     end
     length_valid = (coords.count == ship.length)
-    coords_consec = consecutive?(coords)
+    coords_consec = consecutive?(coords) || coords.count == 1
     length_valid && coords_consec && coords_empty
   end
 

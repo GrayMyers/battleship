@@ -150,7 +150,7 @@ class UserInterface
   end
 
   def determine_shot
-    until rtrn = input_shot(take_input(false)) do
+    until rtrn = input_shot(gets.chomp.upcase) do
       if rtrn == false
         puts "You already shot there.  Please pick a new coordinate:"
       else
@@ -184,20 +184,12 @@ class UserInterface
   end
 
   def winner
-    c_ships_sunk = @computer_ships.all? do |ship|
-      ship.sunk?
-    end
-    p_ships_sunk = @user_ships.all? do |ship|
-      ship.sunk?
-    end
-    if c_ships_sunk
+    if @computer_ships.all? {|ship| ship.sunk?}
       "You won."
-    elsif p_ships_sunk
+    elsif @user_ships.all? {|ship| ship.sunk?}
       "I won."
     else
       nil
     end
   end
-
-
 end
