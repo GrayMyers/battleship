@@ -4,7 +4,7 @@ require './lib/ship'
 require './lib/intelligent_computer.rb'
 
 class Computer
-  attr_reader :board, :ships, :user_board
+  attr_reader :board, :ships, :user_board, :intelligent_computer
   attr_accessor :last_hit
   def setup(user_board, computer_board, ships)
     @board = computer_board
