@@ -100,5 +100,12 @@ class ComputerTest < Minitest::Test
 
   end
 
+  def test_distance_between_cells_helper
+    a1 = @computer_board.cells["A1"]
+    a3 = @computer_board.cells["A3"]
+    b1 = @computer_board.cells["B1"]
 
+    assert_equal 2, @computer.determine_distance_between_cells(a1,a3,1)
+    assert_equal 1, @computer.determine_distance_between_cells(a1,b1,0)
+  end
 end
