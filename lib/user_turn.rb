@@ -50,11 +50,11 @@ class UserTurn
 
   def result(cell)
     if cell.empty?
-      print "miss."
+      "miss."
     elsif cell.ship.sunk?
-      print "hit.\nYou sunk my #{cell.ship.name}!"
+      "hit.\nYou sunk my #{cell.ship.name}!"
     else
-      print "hit."
+      "hit."
     end
   end
 end
