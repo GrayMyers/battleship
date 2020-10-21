@@ -84,8 +84,22 @@ class ComputerTest < Minitest::Test
 
   def test_store_result
     @user_board.cells.values[0].place_ship(@user_ships[0])
+    @user_board.cells.values[1].place_ship(@user_ships[0])
+    @user_board.cells.values[2].place_ship(@user_ships[0])
     @user_board.cells.values[0].fire_upon
+    @computer.store_result(@user_board.cells.values[0])
 
-    assert_equal ["A1"], @computer.store_result(@user_board.cells.values[0])
+    assert_equal ["A1"], @computer.consecutive_hits
+
+    @user_board.cells.values[1].fire_upon
+    @computer.store_result(@user_board.cells.values[1])
+
+    assert_equal ["A1","B1"], @computer.consecutive_hits
+
+    @user_board.cells.values[2].fire_upon
+    @computer.store_result(@user_board.cells.values[2])
+
+    assert_equal [], @computer.consecutive_hits
+
   end
 end
