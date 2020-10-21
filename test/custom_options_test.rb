@@ -48,7 +48,6 @@ class CustomOptionsTest < Minitest::Test
   def test_custom_ships
     @ui.stubs(:ships).returns([["Battleship", 5], ["Destroyer", 4]])
     @ui.setup
-  # require "pry"; binding.pry
     assert_equal "Battleship", @ui.user_ships[0].name
   end
 

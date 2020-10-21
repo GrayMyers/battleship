@@ -44,17 +44,12 @@ class UserInterfaceTest < Minitest::Test
 
   def test_prompt_ship_placement
    expected = ["The Cruiser is 3 units long", "The Sumbarine is 2 units long"]
-   assert_equal expected, @ui.prompt_ship_placement
+   assert_equal expected, @user_turn.prompt_ship_placement
   end
 
   def test_place_ship
-    assert_equal true, @ui.place_ship(@ui.user_ships[0], "A1 A2, A3")
-    assert_nil @ui.place_ship(@ui.user_ships[0], "A1 A2 A5")
-  end
-
-  def test_determine_shot
-    @ui.stubs(:input_shot).returns("A1")
-    assert_equal "A1", @ui.determine_shot
+    assert_equal true, @user_turn.place_ship(@user_turn.user_ships[0], "A1 A2, A3")
+    assert_nil @user_turn.place_ship(@user_turn.user_ships[0], "A1 A2 A5")
   end
 
   def test_computer_winner
