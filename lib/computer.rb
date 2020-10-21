@@ -53,11 +53,11 @@ class Computer
     end
 
 
-    if !available_cells || available_cells.length == 0 
+    if !available_cells || available_cells.length == 0
       if @direction == :x
-        index = 1
-      else
         index = 0
+      else
+        index = 1
       end
 
       all_available = remove_invalid_cells_cell(@user_board.cells).keys
@@ -66,7 +66,6 @@ class Computer
         determine_distance_between_cells(cell1,cell2,axis_index)
       end
     end
-    require "pry"; binding.pry
     available_cells.sample
 
   end
@@ -117,12 +116,15 @@ class Computer
   end
 
   def determine_distance_between_cells(cell1,cell2,index)
-    opp_axis_index = 1 - index #the opposite axis to the axis index
+    opp_axis_index = index #the opposite axis to the axis index
     cell_1_pos = cell1.coordinate[opp_axis_index]
     cell_2_pos = cell2.coordinate[opp_axis_index]
     if opp_axis_index == 0 #if this is true, it is looking at letters which need to be converted to nums
       cell_1_pos = cell_1_pos.ord
       cell_2_pos = cell_2_pos.ord
+    else
+      cell_1_pos = cell_1_pos.to_i
+      cell_2_pos = cell_2_pos.to_i
     end
     (cell_1_pos - cell_2_pos).abs()
   end
