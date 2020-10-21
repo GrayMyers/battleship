@@ -34,8 +34,6 @@ class UserInterfaceTest < Minitest::Test
   end
 
   def test_it_creates_separate_objects_for_user_and_computer
-    @ui.setup
-
     assert_instance_of Ship, @ui.user_ships[0]
     assert_instance_of Ship, @ui.computer_ships[0]
     assert_instance_of Board, @ui.user_board
@@ -50,8 +48,38 @@ class UserInterfaceTest < Minitest::Test
   end
 
   def test_place_ship
-    assert_equal true, @ui.place_ship(@user_ships[0], ["A1", "A2", "A3"])
-    assert_equal false, @ui.place_ship(@user_ships[0], ["A1", "A2", "A5"])
+    assert_equal true, @ui.place_ship(@ui.user_ships[0], "A1 A2, A3")
+    assert_nil @ui.place_ship(@ui.user_ships[0], "A1 A2 A5")
   end
-  
+
+  def test_determine_shot
+    @ui.stubs(:input_shot).returns("A1")
+    assert_equal "A1", @ui.determine_shot
+  end
+
+  def test_computer_winner
+    assert_nil @ui.winner
+
+    3.times do
+      @ui.user_ships[0].hit
+    end
+
+    2.times do
+      @ui.user_ships[1].hit
+    end
+
+    assert_equal "I won.", @ui.winner
+  end
+
+  def test_computer_winner
+    3.times do
+      @ui.computer_ships[0].hit
+    end
+
+    2.times do
+      @ui.computer_ships[1].hit
+    end
+
+    assert_equal "You won.", @ui.winner
+  end
 end
