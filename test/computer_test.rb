@@ -78,6 +78,14 @@ class ComputerTest < Minitest::Test
   end
 
   def test_remove_invalid_cells_cell_helper
+    @computer_board.cells["B2"].fire_upon
+    expected = [
+      "B2","C3","C1","D2"
+    ]
+    assert_equal expected, @computer.remove_invalid_cells_cell(@computer_board.cells["C2"].adjacent_cells).keys
+  end
+
+  def test_remove_invalid_cells_cell_helper
     @computer_board.cells["A1"].fire_upon
     @computer_board.cells["A2"].fire_upon
     @computer_board.cells["A3"].fire_upon
@@ -88,6 +96,6 @@ class ComputerTest < Minitest::Test
       "B3","C3","D3",
       "B4","C4","D4"
     ]
-    assert_equal expected, @computer.remove_invalid_cells_cell(@computer_board.cells).keys
+
   end
 end
