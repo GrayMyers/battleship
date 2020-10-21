@@ -29,8 +29,6 @@ class UserInterface
     puts "Enter 'd' to play with default settings,  or enter 'c' to create a custom board and ships."
     if get_requested_input("C","D") == :continue
       @custom = CustomOptions.new
-      @custom.query_board
-      @custom.query_ships
     else
       @custom = nil
     end
@@ -93,7 +91,8 @@ class UserInterface
   def turn
     display_turn_boards
     puts "Enter the coordinate for your shot:"
-    determine_shot
+    target = determine_shot
+    display_shot_result(target)
   end
 
   def display_turn_boards
@@ -111,36 +110,33 @@ class UserInterface
     puts @computer_board.render
   end
 
+  def input_shot
+    until @computer_board.cells.key?(input = gets.chomp.to_s.upcase) do
+      puts "Please enter a valid coordinate:"
+    end
+    input
+  end
+
   def determine_shot
-    until rtrn = input_shot(gets.chomp.upcase) do
-      if rtrn == false
-        puts "You already shot there.  Please pick a new coordinate:"
-      else
-        puts "Please enter a valid coordinate:"
-      end
+    until !@computer_board.cells[input = input_shot].fired_upon? do
+      puts "You already shot there. Please pick a new coordinate:"
     end
+    @computer_board.cells[input].fire_upon
+    input
   end
 
-  def input_shot(input)
-    cell = @computer_board.cells[input]
-    if !cell
-      nil
-    elsif cell.fired_upon?
-      false
-    else
-      cell.fire_upon
-      puts "Your shot on #{input}"+display_shot_result(!cell.empty?,cell.ship)
-      true
-    end
+  def display_shot_result(target)
+    cell = @computer_board.cells[target]
+    puts "Your shot on #{target} was a #{result(cell)}"
   end
 
-  def display_shot_result(hit,ship)
-    if hit && ship.sunk?
-      " was a hit.\nYou sunk my #{ship.name}!"
-    elsif hit
-      " was a hit."
+  def result(cell)
+    if cell.empty?
+      print "miss."
+    elsif cell.ship.sunk?
+      print "hit.\nYou sunk my #{cell.ship.name}!"
     else
-      " was a miss."
+      print "hit."
     end
   end
 

@@ -5,6 +5,8 @@ class CustomOptions
     @board_width = 4
     @board_height = 4
     @ships = []
+    query_board
+    query_ships
   end
 
   def get_requested_input(continue_key, break_key)
