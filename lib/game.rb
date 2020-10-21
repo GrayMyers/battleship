@@ -13,7 +13,6 @@ class Game
   def prompt_play
     option = @ui.determine_play
     if option == :continue
-      @ui.query_custom
       play_game
     end
   end

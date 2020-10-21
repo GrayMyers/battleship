@@ -1,14 +1,13 @@
-require './lib/board'
-require './lib/cell'
-require './lib/ship'
+
 
 class Computer
-  attr_reader :board, :ships, :user_board
+  attr_reader :board, :ships, :user_board, :consecutive_hits
 
   def setup(user_board, computer_board, ships)
     @board = computer_board
     @user_board = user_board
     @ships = ships
+    @consecutive_hits = []
   end
 
   def generate_coordinates(length)
@@ -32,105 +31,62 @@ class Computer
     end
   end
 
-  def select_target
-    if @last_hit && !@direction
-      #hit a ship last turn but doesn't know which direction it is facing
-      available_cells = remove_invalid_cells_string(@last_hit.adjacent_cells).values
-
-
-    elsif @last_hit
-      #knows ship and direction
-      if @direction == :x
-        aligned = except(@last_hit.adjacent_cells,[:up,:down])
-      else
-        aligned = except(@last_hit.adjacent_cells,[:left,:right])
-      end
-      available_cells = remove_invalid_cells_string(aligned).values
-
-    else
-      #knows no locations of ships
-      available_cells = remove_invalid_cells_cell(@user_board.cells).keys
-    end
-
-
-    if available_cells.length == 0
-      if @direction == :x
-        index = 1
-      else
-        index = 0
-      end
-
-      all_available = remove_invalid_cells_cell(@user_board.cells).keys
-      available_cells = cells_on_axis(all_available,index).min_by do |cell|
-        #find cell which is the closest to the last shot
-        determine_distance_between_cells(cell1,cell2,axis_index)
-      end
-    end
-
-    available_cells.sample
-
-  end
-
   def turn
     target = select_target
     cell = @user_board.cells[target]
-    if target != nil
-      cell.fire_upon
-      if !cell.empty? #hit
-        if @last_hit && !@direction
-          if @last_hit.coordinate[0] == target[0]
-            @direction = :x
-          else
-            @direction = :y
-          end
-        end
-        @last_hit = cell
-        if cell.ship.sunk?
-          @last_hit = nil
-          @direction = nil
-          puts "I sunk your #{cell.ship.name}!"
-        end
-        puts "My shot on #{target} was a hit."
-      else #miss
-        puts "My shot on #{target} was a miss."
-      end
-    end
-    #output result of shot
+    cell.fire_upon
+    display_result(target)
+    store_result(cell)
   end
 
-  def cells_on_axis(available_cells,index)
-    available_cells.select do |cell|
-      @last_hit.coordinate[index] == cell.coordinate[index]
+  def select_target
+    if @consecutive_hits == []
+      random_target
+    else
+      predict_target
     end
   end
 
-  def remove_invalid_cells_string(available_cells)
-    available_cells.select do |direction, coord|
-      @user_board.cells[coord] && !@user_board.cells[coord].fired_upon?
-    end
-  end
-
-  def remove_invalid_cells_cell(available_cells)
-    available_cells.select do |coord, cell|
+  def random_target
+    avail_targets = @user_board.cells.select do |coordinate, cell|
       !cell.fired_upon?
     end
+    avail_targets.keys.sample
   end
 
-  def determine_distance_between_cells(cell1,cell2,index)
-    opp_axis_index = 1 - index #the opposite axis to the axis index
-    cell_1_pos = cell1.coordinate[opp_axis_index]
-    cell_2_pos = cell2.coordinate[opp_axis_index]
-    if opp_axis_index == 0 #if this is true, it is looking at letters which need to be converted to nums
-      cell_1_pos = cell_1_pos.ord
-      cell_2_pos = cell_2_pos.ord
+  def predict_target
+    avail_targets = find_adjacent.flatten
+    avail_targets.find do |coordinate|
+      not_fired_upon = !@user_board.cells[coordinate].fired_upon?
+      consecutive_to_hit = @user_board.consecutive?([@consecutive_hits, coordinate].flatten.sort)
+      not_fired_upon && consecutive_to_hit
     end
-    (cell_1_pos - cell_2_pos).abs()
   end
 
-  def except(hash,keys) #I do not know why this isn't included with ruby
-    keys.each do |k|
-      hash.delete(k)
+  def find_adjacent
+    @consecutive_hits.map do |coord|
+      @user_board.cells[coord].adjacent_cells.values.select do |value|
+        @user_board.valid_coordinate?(value)
+      end
     end
-    hash
+  end
+
+  def store_result(cell)
+    if !cell.empty? && cell.ship.sunk?
+      @consecutive_hits = []
+    elsif !cell.empty?
+      @consecutive_hits << cell.coordinate
+    end
+  end
+
+  def display_result(target)
+    ship = @user_board.cells[target].ship
+    if ship == nil
+      puts "My shot on #{target} was a miss."
+    elsif ship.sunk?
+      puts "My shot on #{target} was a hit.\nI sunk your #{ship.name}!"
+    else
+      puts "My shot on #{target} was a hit."
+    end
   end
 end
