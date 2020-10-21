@@ -53,7 +53,7 @@ class Computer
     end
 
 
-    if available_cells.length == 0
+    if !available_cells || available_cells.length == 0 
       if @direction == :x
         index = 1
       else
@@ -66,7 +66,7 @@ class Computer
         determine_distance_between_cells(cell1,cell2,axis_index)
       end
     end
-
+    require "pry"; binding.pry
     available_cells.sample
 
   end
