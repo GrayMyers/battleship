@@ -89,8 +89,6 @@ class UserInterface
       @user_board.place(ship,processed_input)
       true
     end
-    @computer_board.cells[input].fire_upon
-    input
   end
 
   def turn
