@@ -2,6 +2,7 @@ require './lib/board.rb'
 require './lib/ship.rb'
 require './lib/cell.rb'
 require './lib/custom_options'
+require './lib/user_turn'
 
 class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
@@ -71,7 +72,7 @@ class UserInterface
     ships_index = 0
     while ships_index < (@user_ships.length)
       ship = @user_ships[ships_index]
-      display_user_board
+      puts @user_board.render(true)
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       until place_ship(ship, input = gets.chomp.upcase) do
         puts "Those are invalid coordinates. Please try again: "
@@ -89,55 +90,7 @@ class UserInterface
   end
 
   def turn
-    display_turn_boards
-    puts "Enter the coordinate for your shot:"
-    target = determine_shot
-    display_shot_result(target)
-  end
-
-  def display_turn_boards
-    puts "\n=============COMPUTER BOARD============="
-    display_computer_board
-    puts "==============PLAYER BOARD=============="
-    display_user_board
-  end
-
-  def display_user_board
-    puts @user_board.render(true)
-  end
-
-  def display_computer_board
-    puts @computer_board.render
-  end
-
-  def input_shot
-    until @computer_board.cells.key?(input = gets.chomp.to_s.upcase) do
-      puts "Please enter a valid coordinate:"
-    end
-    input
-  end
-
-  def determine_shot
-    until !@computer_board.cells[input = input_shot].fired_upon? do
-      puts "You already shot there. Please pick a new coordinate:"
-    end
-    @computer_board.cells[input].fire_upon
-    input
-  end
-
-  def display_shot_result(target)
-    cell = @computer_board.cells[target]
-    puts "Your shot on #{target} was a #{result(cell)}"
-  end
-
-  def result(cell)
-    if cell.empty?
-      print "miss."
-    elsif cell.ship.sunk?
-      print "hit.\nYou sunk my #{cell.ship.name}!"
-    else
-      print "hit."
-    end
+    turn = UserTurn.new(@computer_board, @user_board)
   end
 
   def winner
