@@ -10,24 +10,7 @@ class Board
     @height = height
   end
 
-  def clamp(num,min,max)
-    result = [min,num,max].sort[1]
-    success = result == num
-    return success, result
-  end
-
-  def create_empty_cells(width,height)
-    default_min = 2 #there is no reason to work with a board smaller than this
-    default_y_max = 26 #to prevent invalid characters
-    default_x_max = 10 #to prevent row misalignment
-    xsuccess, width = clamp(width,default_min,default_x_max)
-    ysuccess, height = clamp(height,default_min,default_y_max)
-    if !xsuccess
-      puts "Your input for the horizontal board size was out of bounds and set to #{width}."
-    end
-    if !ysuccess
-      puts "Your input for the vertical board size was out of bounds and set to #{height}."
-    end
+  def create_empty_cells(width, height)
     letters = [*"A".."Z"]
     cells = {}
     width.times do |x|
@@ -50,7 +33,7 @@ class Board
       end
     end
     length_valid = (coords.count == ship.length)
-    coords_consec = consecutive?(coords)
+    coords_consec = consecutive?(coords) || coords.count == 1
     length_valid && coords_consec && coords_empty
   end
 

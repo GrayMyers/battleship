@@ -1,107 +1,61 @@
 require './lib/board.rb'
 require './lib/ship.rb'
 require './lib/cell.rb'
+require './lib/custom_options'
 
 class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
 
-  def initialize
-    @board_width = 4
-    @board_height = 4
-    @ships = [["Cruiser", 3], ["Sumbarine", 2]]
-  end
-
-  def setup
-    board_pair = create_board
-    ships_pair = create_ships
-    @user_board = board_pair[0]
-    @computer_board = board_pair[1]
-    @user_ships = ships_pair[0]
-    @computer_ships = ships_pair[1]
-  end
-
-  def create_ships
-    ships = []
-    @ships.sort_by! {|ship| -ship[-1]}
-    2.times do
-      ships << @ships.map do |ship|
-        Ship.new(ship[0], ship[1])
+  def get_requested_input(continue_key, break_key)
+    until (input = gets.chomp.to_s.upcase) == break_key
+      if input == continue_key
+        return :continue
+        break
+      else
+        puts "Please enter a valid option."
       end
     end
-    ships
-  end
-
-  def create_board
-    [Board.new(@board_width,@board_height),Board.new(@board_width,@board_height)]
   end
 
   def determine_play
     puts "Welcome to BATTLESHIP\nEnter 'p' to play. Enter 'q' to quit."
-    get_requested_input("P", "Q")
-  end
-
-  def get_requested_input(continue_key, break_key, message = "Please enter a valid option.")
-    loop do
-      input = gets.chomp.upcase
-      if input == continue_key
-        return :continue
-        break
-      elsif input == break_key
-        return :break
-        break
-      else
-        puts message
-      end
+    if (response = get_requested_input("P", "Q")) == :continue
+      query_custom
     end
+    response
   end
 
   def query_custom
     puts "Enter 'd' to play with default settings,  or enter 'c' to create a custom board and ships."
     if get_requested_input("C","D") == :continue
-      print "Choose board size? (y/n) "
-      if get_requested_input("Y", "N") == :continue
-        @default_board = false
-        custom_board
-      end
-      print "Create custom ships? (y/n) "
-      if get_requested_input("Y", "N") == :continue
-        custom_ships
-      end
+      @custom = CustomOptions.new
+    else
+      @custom = nil
     end
   end
 
-  def custom_board
-    print "Enter custom board width: "
-    @board_width = gets.chomp.to_i
-    print "Enter custom board width: "
-    @board_height = gets.chomp.to_i
+  def setup
+    @user_board = create_board
+    @computer_board = create_board
+    @user_ships = create_ships
+    @computer_ships = create_ships
   end
 
-  def custom_ships
-    @ships = []
-    input = ""
-    until input == :continue
-      print "Enter custom ship name: "
-      name = gets.chomp.to_s.capitalize
-      print "Enter #{name} length: "
-      length = gets.chomp.to_i
-      until 0 < length && length <= [@board_width, @board_height].max do
-        if length < 1
-          print "Length cannot be smaller than 1. Please enter another value: "
-          length = gets.chomp.to_i
-        elsif length > [@board_width, @board_height].max
-          print "Length exceeds board size. Please enter another value: "
-          length = gets.chomp.to_i
-        end
+  def create_board
+    if @custom
+      Board.new(@custom.board_width, @custom.board_height)
+    else
+      Board.new
+    end
+  end
+
+  def create_ships
+    if @custom && @custom.ships != []
+      @custom.ships.map do |ship|
+        Ship.new(ship[0], ship[1])
       end
-      if (length + @ships.sum {|ship| ship[1]}) > (@board_width * @board_height)
-        puts "There is not enough space left on the board for a ship of this length. #{name} cannot be created."
-      else
-        @ships << [name, length]
-        puts "Created custom ship #{name} with length #{length} units"
-      end
-      puts "Enter 'c' to create another ship, or press 'd' for done."
-      input = get_requested_input("D","C")
+    else
+      [Ship.new("Cruiser", 3), Ship.new("Sumbarine", 2)]
     end
   end
 
@@ -113,69 +67,36 @@ class UserInterface
     end
   end
 
-  def determine_ship_placement #untestable due to input required in block
+  def determine_ship_placement
     ships_index = 0
     while ships_index < (@user_ships.length)
       ship = @user_ships[ships_index]
       display_user_board
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
-      until determine_placement_of(ship,take_input(false)) do
+      until place_ship(ship, input = gets.chomp.upcase) do
         puts "Those are invalid coordinates. Please try again: "
       end
       ships_index += 1
     end
   end
 
-  def determine_placement_of(ship,input)
+  def place_ship(ship,input)
     processed_input = input.gsub(",", " ").split(" ")
     if @user_board.valid_placement?(ship,processed_input)
       @user_board.place(ship,processed_input)
       true
-    else
-      false
     end
   end
 
-  def prompt_shot
-    "Enter the coordinate for your shot:"
-  end
-
-  def determine_shot #untestable due to input required in block
-    until rtrn = input_shot(take_input(false)) do
-      if rtrn == false
-        puts "You already shot there.  Please pick a new coordinate:"
-      else
-        puts "Please enter a valid coordinate:"
-      end
-    end
-  end
-
-  def input_shot(input)
-    cell = @computer_board.cells[input]
-    if !cell
-      nil
-    elsif cell.fired_upon?
-      false
-    else
-      cell.fire_upon
-      ship = cell.ship
-      puts "Your shot on #{input}"+display_shot_result(!cell.empty?,ship)
-      true
-    end
-  end
-
-  def display_shot_result(hit,ship)
-    if hit && ship.sunk?
-      " was a hit.\nYou sunk my #{ship.name}!"
-    elsif hit
-      " was a hit."
-    else
-      " was a miss."
-    end
+  def turn
+    display_turn_boards
+    puts "Enter the coordinate for your shot:"
+    target = determine_shot
+    display_shot_result(target)
   end
 
   def display_turn_boards
-    puts "=============COMPUTER BOARD============="
+    puts "\n=============COMPUTER BOARD============="
     display_computer_board
     puts "==============PLAYER BOARD=============="
     display_user_board
@@ -185,42 +106,47 @@ class UserInterface
     puts @user_board.render(true)
   end
 
-  def display_computer_board(hide_ships = false)
-    puts @computer_board.render(hide_ships)
+  def display_computer_board
+    puts @computer_board.render
   end
 
-  def take_input(case_sensitive,show_input_symbol = true)
-    if show_input_symbol
-      print "> "
+  def input_shot
+    until @computer_board.cells.key?(input = gets.chomp.to_s.upcase) do
+      puts "Please enter a valid coordinate:"
     end
-    input = gets.chomp()
-    if !case_sensitive
-      input.upcase
+    input
+  end
+
+  def determine_shot
+    until !@computer_board.cells[input = input_shot].fired_upon? do
+      puts "You already shot there. Please pick a new coordinate:"
+    end
+    @computer_board.cells[input].fire_upon
+    input
+  end
+
+  def display_shot_result(target)
+    cell = @computer_board.cells[target]
+    puts "Your shot on #{target} was a #{result(cell)}"
+  end
+
+  def result(cell)
+    if cell.empty?
+      print "miss."
+    elsif cell.ship.sunk?
+      print "hit.\nYou sunk my #{cell.ship.name}!"
     else
-      input
+      print "hit."
     end
-  end
-
-  def turn
-    display_turn_boards
-    puts prompt_shot
-    determine_shot
   end
 
   def winner
-    c_ships_sunk = @computer_ships.all? do |ship|
-      ship.sunk?
-    end
-    p_ships_sunk = @user_ships.all? do |ship|
-      ship.sunk?
-    end
-    if c_ships_sunk
+    if @computer_ships.all? {|ship| ship.sunk?}
       "You won."
-    elsif p_ships_sunk
+    elsif @user_ships.all? {|ship| ship.sunk?}
       "I won."
     else
       nil
     end
   end
-
 end
