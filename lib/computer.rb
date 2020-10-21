@@ -4,7 +4,7 @@ require './lib/ship'
 
 class Computer
   attr_reader :board, :ships, :user_board
-
+  attr_accessor :last_hit
   def setup(user_board, computer_board, ships)
     @board = computer_board
     @user_board = user_board
@@ -60,7 +60,7 @@ class Computer
         index = 1
       end
 
-      all_available = remove_invalid_cells_cell(@user_board.cells).keys
+      all_available = remove_invalid_cells_cell(@user_board.cells).values
       available_cells = cells_on_axis(all_available,index).min_by do |cell|
         #find cell which is the closest to the last shot
         determine_distance_between_cells(cell1,cell2,axis_index)
