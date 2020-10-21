@@ -70,4 +70,18 @@ class ComputerTest < Minitest::Test
     @computer.turn
     assert_equal 16, @user_board.render.count("M")
   end
+
+  def test_except_helper_method
+    input_hash = {
+      a: 1,
+      b: 2,
+      c: 3,
+      d: 4
+    }
+    expected_output = {
+      a: 1,
+      d: 4
+    }
+    assert_equal expected_output, @computer.except(input_hash,[:b,:c])
+  end
 end
