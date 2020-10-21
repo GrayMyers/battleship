@@ -1,5 +1,5 @@
 class IntelligentComputer
-
+  attr_accessor :last_hit
   def initialize(user_board,computer_board)
     @user_board = user_board
     @computer_board = computer_board
