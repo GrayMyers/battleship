@@ -1,5 +1,6 @@
 require "minitest/autorun"
 require "minitest/pride"
+require "mocha/minitest"
 require './lib/computer'
 require './lib/board'
 require './lib/cell'
@@ -44,13 +45,6 @@ class ComputerTest < Minitest::Test
     assert_equal 5, @computer.board.render(true).count("S")
   end
 
-  def test_it_can_choose_a_valid_coordinate_to_fire_on
-    target = @computer.select_target
-    assert_equal String, target.class
-    assert_equal true, @user_board.valid_coordinate?(target)
-    assert_equal false, @user_board.cells[target].fired_upon?
-  end
-
   def test_turn
     assert_equal 0, @user_board.render.count("M")
 
@@ -59,15 +53,5 @@ class ComputerTest < Minitest::Test
 
     @computer.turn
     assert_equal 2, @user_board.render.count("M")
-  end
-
-  def test_it_does_not_create_an_endless_loop_if_all_cells_have_been_fired_on
-    16.times do
-      @computer.turn
-    end
-
-    assert_equal 16, @user_board.render.count("M")
-    @computer.turn
-    assert_equal 16, @user_board.render.count("M")
   end
 end
