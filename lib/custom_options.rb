@@ -38,7 +38,6 @@ class CustomOptions
     print "Create custom ships? (y/n) "
     if get_requested_input("Y", "N") == :continue
       choose_ships
-      return true
     end
   end
 
