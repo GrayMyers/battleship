@@ -61,10 +61,11 @@ class Computer
       end
 
       all_available = remove_invalid_cells_cell(@user_board.cells).values
-      available_cells = cells_on_axis(all_available,index).min_by do |cell|
+      available_cells = [cells_on_axis(all_available,index).min_by do |cell|
         #find cell which is the closest to the last shot
-        determine_distance_between_cells(cell1,cell2,axis_index)
-      end
+        determine_distance_between_cells(@last_hit,cell,index)
+      end.coordinate]
+      require "Pry"; binding.pry
     end
     available_cells.sample
 
@@ -105,7 +106,7 @@ class Computer
 
   def remove_invalid_cells_string(available_cells)
     available_cells.select do |direction, coord|
-      @user_board.cells[coord] && !@user_board.cells[coord].fired_upon?
+      @user_board.cells[coord] != nil && !@user_board.cells[coord].fired_upon?
     end
   end
 
