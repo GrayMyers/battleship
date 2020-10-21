@@ -45,13 +45,6 @@ class ComputerTest < Minitest::Test
     assert_equal 5, @computer.board.render(true).count("S")
   end
 
-  def test_it_can_choose_a_valid_coordinate_to_fire_on
-    target = @computer.select_target
-    assert_equal String, target.class
-    assert_equal true, @user_board.valid_coordinate?(target)
-    assert_equal false, @user_board.cells[target].fired_upon?
-  end
-
   def test_turn
     assert_equal 0, @user_board.render.count("M")
 
