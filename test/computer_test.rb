@@ -82,7 +82,7 @@ class ComputerTest < Minitest::Test
     expected = [
       "B2","C3","C1","D2"
     ]
-    assert_equal expected, @computer.remove_invalid_cells_cell(@computer_board.cells["C2"].adjacent_cells).keys
+    assert_equal expected, @computer.remove_invalid_cells_string(@computer_board.cells["C2"].adjacent_cells).keys
   end
 
   def test_remove_invalid_cells_cell_helper
@@ -96,6 +96,9 @@ class ComputerTest < Minitest::Test
       "B3","C3","D3",
       "B4","C4","D4"
     ]
+    assert_equal expected, @computer.remove_invalid_cells_cell(@computer_board.cells).keys
 
   end
+
+
 end
