@@ -61,15 +61,7 @@ class ComputerTest < Minitest::Test
     assert_equal 2, @user_board.render.count("M")
   end
 
-  def test_it_does_not_create_an_endless_loop_if_all_cells_have_been_fired_on
-    16.times do
-      @computer.turn
-    end
-
-    assert_equal 16, @user_board.render.count("M")
-    @computer.turn
-    assert_equal 16, @user_board.render.count("M")
-  end
+  
 
   def test_except_helper_method
     input_hash = {
