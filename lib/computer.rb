@@ -37,6 +37,7 @@ class Computer
       #hit a ship last turn but doesn't know which direction it is facing
       available_cells = remove_invalid_cells_string(@last_hit.adjacent_cells).values
 
+
     elsif @last_hit
       #knows ship and direction
       if @direction == :x
