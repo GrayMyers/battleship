@@ -45,4 +45,5 @@ class CustomOptionsTest < Minitest::Test
     @ui.setup
     assert_equal "Battleship", @ui.user_ships[0].name
   end
+
 end

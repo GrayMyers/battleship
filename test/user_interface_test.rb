@@ -27,13 +27,16 @@ class UserInterfaceTest < Minitest::Test
   end
 
   def query_custom
+
     @ui.stubs(:get_requested_input).returns(nil)
 
     assert_nil @ui.query_custom
     assert_nil @ui.custom
+
   end
 
   def test_it_creates_separate_objects_for_user_and_computer
+    skip
     assert_instance_of Ship, @ui.user_ships[0]
     assert_instance_of Ship, @ui.computer_ships[0]
     assert_instance_of Board, @ui.user_board

@@ -2,7 +2,9 @@ require './lib/board.rb'
 require './lib/ship.rb'
 require './lib/cell.rb'
 require './lib/custom_options'
+
 require './lib/user_turn'
+
 
 class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
