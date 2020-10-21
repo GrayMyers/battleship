@@ -1,5 +1,6 @@
 require "minitest/autorun"
 require "minitest/pride"
+require "mocha/minitest"
 require './lib/computer'
 require './lib/board'
 require './lib/cell'
@@ -107,5 +108,16 @@ class ComputerTest < Minitest::Test
 
     assert_equal 2, @computer.determine_distance_between_cells(a1,a3,1)
     assert_equal 1, @computer.determine_distance_between_cells(a1,b1,0)
+  end
+
+  def test_cells_on_axis_helper
+    @computer_board.cells["A2"].place_ship(@computer.ships[0])
+    @computer.last_hit = @computer_board.cells["A2"]
+    c = @computer_board.cells
+    expected_horz = [c["A1"],c["A2"],c["A3"],c["A4"]]
+    expected_vert = [c["A2"],c["B2"],c["C2"],c["D2"]]
+
+    assert_equal expected_horz, @computer.cells_on_axis(@computer_board.cells.values,0)
+    assert_equal expected_vert, @computer.cells_on_axis(@computer_board.cells.values,1)
   end
 end
