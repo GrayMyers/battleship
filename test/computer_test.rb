@@ -61,7 +61,7 @@ class ComputerTest < Minitest::Test
     assert_equal 2, @user_board.render.count("M")
   end
 
-  
+
 
   def test_except_helper_method
     input_hash = {
@@ -75,5 +75,19 @@ class ComputerTest < Minitest::Test
       d: 4
     }
     assert_equal expected_output, @computer.except(input_hash,[:b,:c])
+  end
+
+  def test_remove_invalid_cells_cell_helper
+    @computer_board.cells["A1"].fire_upon
+    @computer_board.cells["A2"].fire_upon
+    @computer_board.cells["A3"].fire_upon
+    @computer_board.cells["A4"].fire_upon
+    expected = [
+      "B1","C1","D1",
+      "B2","C2","D2",
+      "B3","C3","D3",
+      "B4","C4","D4"
+    ]
+    assert_equal expected, @computer.remove_invalid_cells_cell(@computer_board.cells).keys
   end
 end
