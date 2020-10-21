@@ -39,4 +39,10 @@ class CustomOptionsTest < Minitest::Test
     @custom.stubs(:get_requested_input).returns(nil)
     assert_equal [], @custom.ships
   end
+
+  def test_custom_ships
+    @ui.stubs(:ships).returns([["Battleship", 5], ["Destroyer", 4]])
+    @ui.setup
+    assert_equal "Battleship", @ui.user_ships[0].name
+  end
 end

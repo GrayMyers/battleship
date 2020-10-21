@@ -2,6 +2,7 @@ require './lib/user_interface.rb'
 require './lib/computer'
 require './lib/board.rb'
 require './lib/ship.rb'
+require './lib/custom_options'
 
 require 'minitest/autorun'
 require 'minitest/pride'
@@ -15,51 +16,65 @@ class UserInterfaceTest < Minitest::Test
     @computer.setup(@ui.user_board, @ui.computer_board, @ui.computer_ships)
   end
 
+
   def test_it_exists
     assert_instance_of UserInterface, @ui
   end
 
   def test_determine_play
-    
-    @ui.stubs(:get_requested_input).returns(:continue)
-    assert_equal :continue, @ui.determine_play
-
     @ui.stubs(:get_requested_input).returns(nil)
     assert_nil @ui.determine_play
   end
 
   def query_custom
-    skip
     @ui.stubs(:get_requested_input).returns(nil)
+
     assert_nil @ui.query_custom
-  end
-
-  def test_custom_board_dimensions
-    skip
-    @ui.stubs(:get_integer).returns(5)
-    @ui.custom_board
-    @ui.setup
-
-    assert_equal 25, @ui.user_board.cells.count
-  end
-
-  def test_custom_ships
-    skip
-    @ui.stubs(:ships).returns([["Battleship", 5], ["Destroyer", 4]])
-    @ui.setup
-  require "pry"; binding.pry
-    assert_equal "Battleship", @ui.user_ships[0].name
-
-
+    assert_nil @ui.custom
   end
 
   def test_it_creates_separate_objects_for_user_and_computer
-    skip
     assert_instance_of Ship, @ui.user_ships[0]
     assert_instance_of Ship, @ui.computer_ships[0]
     assert_instance_of Board, @ui.user_board
     assert_instance_of Board, @ui.computer_board
     assert @ui.user_board != @ui.computer_board
     assert @ui.user_board != @computer.board
+  end
+
+  def test_prompt_ship_placement
+   expected = ["The Cruiser is 3 units long", "The Sumbarine is 2 units long"]
+   assert_equal expected, @user_turn.prompt_ship_placement
+  end
+
+  def test_place_ship
+    assert_equal true, @user_turn.place_ship(@user_turn.user_ships[0], "A1 A2, A3")
+    assert_nil @user_turn.place_ship(@user_turn.user_ships[0], "A1 A2 A5")
+  end
+
+  def test_computer_winner
+    assert_nil @ui.winner
+
+    3.times do
+      @ui.user_ships[0].hit
+    end
+
+    2.times do
+      @ui.user_ships[1].hit
+    end
+
+    assert_equal "I won.", @ui.winner
+  end
+
+  def test_computer_winner
+    3.times do
+      @ui.computer_ships[0].hit
+    end
+
+    2.times do
+      @ui.computer_ships[1].hit
+    end
+
+    assert_equal "You won.", @ui.winner
   end
 end
