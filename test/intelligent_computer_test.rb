@@ -17,32 +17,19 @@ class IntelligentComputerTest < Minitest::Test
   end
 
   def test_it_can_choose_a_valid_coordinate_to_fire_on
-    target = @intelligent_computer.select_target
+    target = @intelligent_computer.select_target(@user_board)
     assert_equal String, target.class
     assert_equal true, @user_board.valid_coordinate?(target)
     assert_equal false, @user_board.cells[target].fired_upon?
   end
 
-  def test_except_helper_method
-    input_hash = {
-      a: 1,
-      b: 2,
-      c: 3,
-      d: 4
-    }
-    expected_output = {
-      a: 1,
-      d: 4
-    }
-    assert_equal expected_output, @intelligent_computer.except(input_hash,[:b,:c])
-  end
 
   def test_remove_invalid_cells_cell_helper
     @computer_board.cells["B2"].fire_upon
     expected = [
       "B2","C3","C1","D2"
     ]
-    assert_equal expected, @intelligent_computer.remove_invalid_cells_string(@computer_board.cells["C2"].adjacent_cells).keys
+    assert_equal expected, @intelligent_computer.remove_invalid_cells_string(@computer_board.cells["C2"].adjacent_cells.values).keys
   end
 
   def test_remove_invalid_cells_cell_helper
@@ -60,23 +47,5 @@ class IntelligentComputerTest < Minitest::Test
 
   end
 
-  def test_distance_between_cells_helper
-    a1 = @computer_board.cells["A1"]
-    a3 = @computer_board.cells["A3"]
-    b1 = @computer_board.cells["B1"]
-
-    assert_equal 2, @intelligent_computer.determine_distance_between_cells(a1,a3,1)
-    assert_equal 1, @intelligent_computer.determine_distance_between_cells(a1,b1,0)
-  end
-
-  def test_cells_on_axis_helper
-    @computer_board.cells["A2"].place_ship(@computer.ships[0])
-    @intelligent_computer.last_hit = @computer_board.cells["A2"]
-    c = @computer_board.cells
-    expected_horz = [c["A1"],c["A2"],c["A3"],c["A4"]]
-    expected_vert = [c["A2"],c["B2"],c["C2"],c["D2"]]
-
-    assert_equal expected_horz, @intelligent_computer.cells_on_axis(@computer_board.cells.values,0)
-    assert_equal expected_vert, @intelligent_computer.cells_on_axis(@computer_board.cells.values,1)
-  end
+  
 end

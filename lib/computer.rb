@@ -10,7 +10,7 @@ class Computer
     @board = computer_board
     @user_board = user_board
     @ships = ships
-    @intelligent_computer = IntelligentComputer.new(user_board,computer_board)
+    @intelligent_computer = IntelligentComputer.new
   end
 
   def generate_coordinates(length)
@@ -36,21 +36,21 @@ class Computer
 
 
   def turn
-    target = @intelligent_computer.select_target()
+    target = @intelligent_computer.select_target(@user_board)
     cell = @user_board.cells[target]
-    if target != nil
-      cell.fire_upon
-      if !cell.empty? #hit
-        @intelligent_computer.analyze_hit(target)
-        if cell.ship.sunk?
-          @intelligent_computer.analyze_sunk
-          puts "I sunk your #{cell.ship.name}!"
-        end
-        puts "My shot on #{target} was a hit."
-      else #miss
-        puts "My shot on #{target} was a miss."
+    cell.fire_upon
+    @intelligent_computer.analyze_shot(cell)
+    display_result(cell)
+  end
+
+  def display_result(cell)
+    if !cell.empty? #hit
+      if cell.ship.sunk?
+        puts "I sunk your #{cell.ship.name}!"
       end
+      puts "My shot on #{cell.coordinate} was a hit."
+    else #miss
+      puts "My shot on #{cell.coordinate} was a miss."
     end
-    #output result of shot
   end
 end

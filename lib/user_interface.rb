@@ -9,7 +9,7 @@ require './lib/user_turn'
 class UserInterface
   attr_reader :user_board, :computer_board, :user_ships, :computer_ships
 
-  def get_requested_input(continue_key, break_key)
+  def get_requested_input(continue_key, break_key, test_instance = false)
     until (input = gets.chomp.to_s.upcase) == break_key
       if input == continue_key
         return :continue
@@ -89,8 +89,6 @@ class UserInterface
       @user_board.place(ship,processed_input)
       true
     end
-    @computer_board.cells[input].fire_upon
-    input
   end
 
   def turn
