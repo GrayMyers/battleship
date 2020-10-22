@@ -1,16 +1,17 @@
-require './lib/board'
-require './lib/cell'
-require './lib/ship'
-require './lib/intelligent_computer.rb'
+
 
 class Computer
-  attr_reader :board, :ships, :user_board, :intelligent_computer
-  attr_accessor :last_hit
+  attr_reader :board, :ships, :user_board, :consecutive_hits
+
   def setup(user_board, computer_board, ships)
     @board = computer_board
     @user_board = user_board
     @ships = ships
+<<<<<<< HEAD
     @intelligent_computer = IntelligentComputer.new
+=======
+    @consecutive_hits = []
+>>>>>>> a271d3b04e6d20ffe4142432858ab3da75a986a2
   end
 
   def generate_coordinates(length)
@@ -34,8 +35,8 @@ class Computer
     end
   end
 
-
   def turn
+<<<<<<< HEAD
     target = @intelligent_computer.select_target(@user_board)
     cell = @user_board.cells[target]
     cell.fire_upon
@@ -47,10 +48,69 @@ class Computer
     if !cell.empty? #hit
       if cell.ship.sunk?
         puts "I sunk your #{cell.ship.name}!"
+=======
+    target = select_target
+    cell = @user_board.cells[target]
+    cell.fire_upon
+    display_result(target)
+    store_result(cell)
+  end
+
+  def select_target
+    if @consecutive_hits == []
+      random_target
+    else
+      predict_target
+    end
+  end
+
+  def random_target
+    avail_targets = @user_board.cells.select do |coordinate, cell|
+      !cell.fired_upon?
+    end
+    avail_targets.keys.sample
+  end
+
+  def predict_target
+    avail_targets = find_adjacent.flatten
+    avail_targets.find do |coordinate|
+      not_fired_upon = !@user_board.cells[coordinate].fired_upon?
+      consecutive_to_hit = @user_board.consecutive?([@consecutive_hits, coordinate].flatten.sort)
+      not_fired_upon && consecutive_to_hit
+    end
+  end
+
+  def find_adjacent
+    @consecutive_hits.map do |coord|
+      @user_board.cells[coord].adjacent_cells.values.select do |value|
+        @user_board.valid_coordinate?(value)
+>>>>>>> a271d3b04e6d20ffe4142432858ab3da75a986a2
       end
       puts "My shot on #{cell.coordinate} was a hit."
     else #miss
       puts "My shot on #{cell.coordinate} was a miss."
     end
+<<<<<<< HEAD
+=======
+  end
+
+  def store_result(cell)
+    if !cell.empty? && cell.ship.sunk?
+      @consecutive_hits = []
+    elsif !cell.empty?
+      @consecutive_hits << cell.coordinate
+    end
+  end
+
+  def display_result(target)
+    ship = @user_board.cells[target].ship
+    if ship == nil
+      puts "My shot on #{target} was a miss."
+    elsif ship.sunk?
+      puts "My shot on #{target} was a hit.\nI sunk your #{ship.name}!"
+    else
+      puts "My shot on #{target} was a hit."
+    end
+>>>>>>> a271d3b04e6d20ffe4142432858ab3da75a986a2
   end
 end
