@@ -7,7 +7,11 @@ class Computer
     @board = computer_board
     @user_board = user_board
     @ships = ships
+<<<<<<< HEAD
+    @intelligent_computer = IntelligentComputer.new
+=======
     @consecutive_hits = []
+>>>>>>> a271d3b04e6d20ffe4142432858ab3da75a986a2
   end
 
   def generate_coordinates(length)
@@ -32,6 +36,19 @@ class Computer
   end
 
   def turn
+<<<<<<< HEAD
+    target = @intelligent_computer.select_target(@user_board)
+    cell = @user_board.cells[target]
+    cell.fire_upon
+    @intelligent_computer.analyze_shot(cell)
+    display_result(cell)
+  end
+
+  def display_result(cell)
+    if !cell.empty? #hit
+      if cell.ship.sunk?
+        puts "I sunk your #{cell.ship.name}!"
+=======
     target = select_target
     cell = @user_board.cells[target]
     cell.fire_upon
@@ -67,8 +84,14 @@ class Computer
     @consecutive_hits.map do |coord|
       @user_board.cells[coord].adjacent_cells.values.select do |value|
         @user_board.valid_coordinate?(value)
+>>>>>>> a271d3b04e6d20ffe4142432858ab3da75a986a2
       end
+      puts "My shot on #{cell.coordinate} was a hit."
+    else #miss
+      puts "My shot on #{cell.coordinate} was a miss."
     end
+<<<<<<< HEAD
+=======
   end
 
   def store_result(cell)
@@ -88,5 +111,6 @@ class Computer
     else
       puts "My shot on #{target} was a hit."
     end
+>>>>>>> a271d3b04e6d20ffe4142432858ab3da75a986a2
   end
 end
